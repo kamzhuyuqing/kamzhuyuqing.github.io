@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,工具,linux,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Arthas 是Alibaba 开源的一款线上诊断工具，相比Java 自带的jinfo, jmap,jstat 等工具更方便(起码不用记那么多参数)，而且利用字节码增强技术，可以很好的对线上的问题进行定位以及解决，不用再为生产或者测试环境无法debug而感到无能为力。其实Arthas的官方用户手册已经写得很不错了，大多数用户看他的官方说明就能很好的使用这款工具了。传送门:Arthas 官方使用手册">
+<meta name="keywords" content="java,工具,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java线上诊断神器Arthas-1">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="Arthas 是Alibaba 开源的一款线上诊断工具，相比Java 自带的jinfo, jmap,jstat 等工具更方便(起码不用记那么多参数)，而且利用字节码增强技术，可以很好的对线上的问题进行定位以及解决，不用再为生产或者测试环境无法debug而感到无能为力。其实Arthas的官方用户手册已经写得很不错了，大多数用户看他的官方说明就能很好的使用这款工具了。传送门:Arthas 官方使用手册">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/06056782287DF0FB583893A90ED22ACB.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/D013B590FC73F026F41B10FF8799AD39.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/E0182262011B84B4A2D8BF9E258B0F0C.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/EDC69142FB2FBD19029BC84ABCA4DDE7.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/AB1774B9B5B273D8F135430FB8A17434.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/021BE146660545555D21B89226A5D01C.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/BFA9FB93C480FB9DD91499DF4BFA5A6D.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/A4076E8B42777CB30C9DB5641F8CFF9F.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/BE9A305F9D1CA9A9F1F9CE51257DD94D.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/A97A41EC399FC0080A7B654464ACAE51.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/EF21B68B1CE25DE39458FC55515EE621.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/815CE1B68AC4286288A6B2B80FFE7D19.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/24C115FA4DAE620C2586D855F23D2B01.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/2DA017F37F04778DF929D4A05CCA820D.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/9D8E6E2932BE42879671A5C6F523185E.jpg">
+<meta property="og:updated_time" content="2018-12-19T15:56:30.889Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java线上诊断神器Arthas-1">
+<meta name="twitter:description" content="Arthas 是Alibaba 开源的一款线上诊断工具，相比Java 自带的jinfo, jmap,jstat 等工具更方便(起码不用记那么多参数)，而且利用字节码增强技术，可以很好的对线上的问题进行定位以及解决，不用再为生产或者测试环境无法debug而感到无能为力。其实Arthas的官方用户手册已经写得很不错了，大多数用户看他的官方说明就能很好的使用这款工具了。传送门:Arthas 官方使用手册">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/06056782287DF0FB583893A90ED22ACB.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/">
+
+
+
+
+
+  <title>Java线上诊断神器Arthas-1 | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2018/12/19/Java线上诊断神器Arthas-1/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java线上诊断神器Arthas-1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T23:09:48+08:00">
+                2018-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>Arthas</strong> 是Alibaba 开源的一款线上诊断工具，相比Java 自带的jinfo, jmap,jstat 等工具更方便(起码不用记那么多参数)，而且利用字节码增强技术，可以很好的对线上的问题进行定位以及解决，不用再为生产或者测试环境无法debug而感到无能为力。其实Arthas的官方用户手册已经写得很不错了，大多数用户看他的官方说明就能很好的使用这款工具了。传送门:<a href="https://alibaba.github.io/arthas/index.html" target="_blank" rel="noopener">Arthas 官方使用手册</a>，写这个系列的文章完全是记录一下自己的使用感受，我更建议去看官方的手册。</p>
+<h2 id="Arthas-解决什么问题"><a href="#Arthas-解决什么问题" class="headerlink" title="Arthas 解决什么问题"></a>Arthas 解决什么问题</h2><ul>
+<li>1.当线上出现bug时，由于线上的环境问题无法进行debug，而线下无法重现此bug时。</li>
+<li>2.当自己新修改的代码没有执行时，究竟是业务逻辑问题，还是没有成功commit 上去。</li>
+<li>3.当想查看Jvm相关参数的时候，java自带的命令太过繁杂，有没有一个统一视角来查看这些JVM的实时状态。</li>
+<li>4.当自己想查看系统的运行状况时，想要查看cpu，内存等敏感参数的使用情况。</li>
+</ul>
+<h2 id="Arthas-的安装与启动"><a href="#Arthas-的安装与启动" class="headerlink" title="Arthas 的安装与启动"></a>Arthas 的安装与启动</h2><p>想必很多开发人员也有上面的一些疑问，我们现在就来安装和启动Arthas。环境说明:我们这里以linux的操作为主，windows 和 mac 系统的安装官网也有，我们不再做操作。Jdk 版本为 <strong>1.7.0_67</strong><br>arthas 支持linux 上一键安装，安装命令: <strong>curl -L <a href="https://alibaba.github.io/arthas/install.sh" target="_blank" rel="noopener">https://alibaba.github.io/arthas/install.sh</a> | sh</strong> 下载后我们可以看到当前目录下有一个<strong>as.sh</strong> 脚本文件。为了更好的操作它，我们可以将它放入 $path 中（如果遇到 <strong>curl: (35) SSL connect error</strong> 错误 可以先执行<strong>yum install nss</strong>）.<br><img src="06056782287DF0FB583893A90ED22ACB.jpg" alt="IMAGE"></p>
+<p>下载后运行在当前目录下运行: <strong>./as.sh</strong><br><img src="D013B590FC73F026F41B10FF8799AD39.jpg" alt="IMAGE"></p>
+<p>我们可以看到，运行脚本后出现java 进程列表，当我们想看哪一个进程的信息时，选择进行的序号(<strong>每次使用完Arthas，都要记得使用shutdown 命令退出，不然下次进入后，就算选择了其他进程的序号，都还是会进入到上一次未 shutdown 的进程中，这一点对新手不是太友好。</strong>)<br>我们选择序号3 的进程(这里可能会有更新)，如图:<br><img src="E0182262011B84B4A2D8BF9E258B0F0C.jpg" alt="IMAGE"><br>我们需要注意我们当前进行进行的<strong>pid</strong> 防止上面提到的未shutdown的问题，进入错误的进程。</p>
+<p>至此我们已经完成了Arthas 的安装与启动。</p>
+<h2 id="Arthas-JVM-相关命令"><a href="#Arthas-JVM-相关命令" class="headerlink" title="Arthas JVM 相关命令"></a>Arthas JVM 相关命令</h2><p>我们Arthas 的命令还是以功能性分类描述，下面是JVM 相关命令的</p>
+<ul>
+<li>1.<strong>dashboard</strong> -&gt; 当前系统的实时数据面板</li>
+<li>2.<strong>thread</strong> -&gt; 当前JVM 线程堆栈信息</li>
+<li>3.<strong>jvm</strong> -&gt; 查看当前JVM 的信息</li>
+<li>4.<strong>sysprop</strong> -&gt; 查看和修改JVM的系统属性</li>
+<li>5.<strong>getstatic</strong> -&gt; 查看类的静态属性</li>
+</ul>
+<h3 id="dashboard-命令"><a href="#dashboard-命令" class="headerlink" title="dashboard 命令"></a>dashboard 命令</h3><p>我们在已经进入进程的情况下，输入dashboard，屏幕会持续输出当前系统的实时数据面板(想要停止输出可以按 ctrl+c )进程实时信息面板主要分为3大块，包括<strong>线程</strong>，<strong>内存和GC</strong>，<strong>系统信息</strong> 如图所示(想要更详细的字段说明可以上官网查看。)<br><img src="EDC69142FB2FBD19029BC84ABCA4DDE7.jpg" alt="IMAGE"><br>使用建议: 当想要大致看到系统线程的运行状态，占用资源 和JVM 的堆，新生代，老年代的使用情况，GC的信息，以及java 版本信息都可以用此命令。</p>
+<h3 id="thread-命令"><a href="#thread-命令" class="headerlink" title="thread 命令"></a>thread 命令</h3><p>thread 命令可以查看当前线程的信息，查看线程的堆栈。<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>线程id</td>
+</tr>
+<tr>
+<td>[n]</td>
+<td>指定最忙的n个线程并打印</td>
+</tr>
+<tr>
+<td>[b]</td>
+<td>找出当前阻塞其他线程的线程</td>
+</tr>
+<tr>
+<td>[i]</td>
+<td>打印时间间隔，单位为毫秒 </td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>我们先写好示例代码:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">			SleepThread sleepThread = <span class="keyword">new</span> SleepThread(<span class="string">"t"</span>+i);</span><br><span class="line">			sleepThread.start();</span><br><span class="line">			<span class="comment">/*try &#123;</span></span><br><span class="line"><span class="comment">				sleepThread.join();</span></span><br><span class="line"><span class="comment">			&#125; catch (InterruptedException e) &#123;</span></span><br><span class="line"><span class="comment">				e.printStackTrace();</span></span><br><span class="line"><span class="comment">			&#125;*/</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SleepThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">		<span class="keyword">private</span> String threadName;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">SleepThread</span><span class="params">(String threadName)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.threadName = threadName;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">synchronized</span> (SleepThread.class)&#123;</span><br><span class="line">				sleep();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sleep</span><span class="params">()</span></span>&#123;</span><br><span class="line">			System.out.println(<span class="string">"当前线程:"</span>+threadName+<span class="string">"锁住30秒"</span>);</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Thread.sleep(<span class="number">30000</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>代码准备好之后我们可以利用 <strong>javac Demo.java</strong>进行编译，生产class 文件之后运行<strong>java Demo</strong> 命令运行程序。如图:<br><img src="AB1774B9B5B273D8F135430FB8A17434.jpg" alt="IMAGE"></p>
+<p>我们使用as.sh 进入Demo的进程，输入<strong>thread</strong> 命令:<br><img src="021BE146660545555D21B89226A5D01C.jpg" alt="IMAGE"><br>通过thread 命令我们可以看到这个进程所有线程的状态。包括各个线程状态的统计，线程的名称，分组，状态，占用CPU率，是否中断，是否是守护线程等信息。</p>
+<p>输入<strong>thread -b </strong>命令查看正在阻塞的线程:<br><img src="BFA9FB93C480FB9DD91499DF4BFA5A6D.jpg" alt="IMAGE"></p>
+<p>输入<strong>thread -n 3</strong> 命令查看最忙的三个线程:<br><img src="A4076E8B42777CB30C9DB5641F8CFF9F.jpg" alt="IMAGE"></p>
+<p>使用建议:thread 可以说对线程的监控相对全面，如果系统业务卡死，可以先来线程这边看看是否有阻塞情况。</p>
+<h3 id="jvm-命令"><a href="#jvm-命令" class="headerlink" title="jvm 命令"></a>jvm 命令</h3><p>输入jvm 命令 屏幕会打印当前JVM 信息，JVM 信息包括 <strong>运行信息</strong>, <strong>类加载信息</strong>， <strong>编译信息</strong>， <strong>GC信息</strong>， <strong>新生代老年代信息</strong>， <strong>内存信息</strong>，<strong>操作系统的信息</strong>， <strong>线程信息</strong>。<br><img src="BE9A305F9D1CA9A9F1F9CE51257DD94D.jpg" alt="IMAGE"><br><img src="A97A41EC399FC0080A7B654464ACAE51.jpg" alt="IMAGE"><br><img src="EF21B68B1CE25DE39458FC55515EE621.jpg" alt="IMAGE"></p>
+<h3 id="sysprop-命令"><a href="#sysprop-命令" class="headerlink" title="sysprop 命令"></a>sysprop 命令</h3><p>sysprop 可以 <strong>查看所有属性</strong>， <strong>查看单个属性</strong>， <strong>修改单个属性</strong><br>示例:<br>查看所有属性: sysprop<br><img src="815CE1B68AC4286288A6B2B80FFE7D19.jpg" alt="IMAGE"></p>
+<p>查看单个属性: sysprop key<br><img src="24C115FA4DAE620C2586D855F23D2B01.jpg" alt="IMAGE"></p>
+<p>修改单个属性: sysprop key value (示例略)</p>
+<h3 id="getstatic-命令"><a href="#getstatic-命令" class="headerlink" title="getstatic 命令"></a>getstatic 命令</h3><p>getstatic 可以查看类的静态属性<br>用法示例: getstatic class_name field_name<br>我们下面的示例代码编译并运行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"> */</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticDemo</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> Map&lt;String, String&gt; map  = <span class="keyword">new</span> HashMap&lt;String, String&gt;()&#123;&#123;put(<span class="string">"111"</span>,<span class="string">"111"</span>);&#125;&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Integer value1 = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Integer value2 = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">		Object lock = <span class="keyword">new</span> Object();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">synchronized</span> (lock)&#123;</span><br><span class="line">				<span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">					lock.wait();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.print(<span class="string">"进程退出"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>进入进程后，我们分别输入<strong>getstatic StaticDemo value1</strong> 以及 <strong>getstatic StaticDemo value2</strong> (注意class_name为包全名，示例代码我放在默认包下面，所以没有包名)。<br><img src="2DA017F37F04778DF929D4A05CCA820D.jpg" alt="IMAGE"><br>从结果上我们可以看到，由于value1 不是static 变量，所以getstatic 命令无法查看，而value2 是static 变量，所以可以查看。</p>
+<p>我们再来看一下map的值， 输入<strong>getstatic StaticDemo map ‘entrySet().iterator.{? #this.key==”111”}’</strong><br><img src="9D8E6E2932BE42879671A5C6F523185E.jpg" alt="IMAGE"></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>至此，我们这个系列的第一篇文章讲了Arthas 的安装以及启动，还有JVM 相关命令的使用示例。下一篇我们会接着讲<strong>类加载相关命令</strong>和<strong>方法监控跟踪相关命令</strong>。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/工具/" rel="tag"># 工具</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/08/Java并发编程队列同步器AQS-1/" rel="next" title="Java并发队列同步器AQS(一)">
+                <i class="fa fa-chevron-left"></i> Java并发队列同步器AQS(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Arthas-解决什么问题"><span class="nav-number">1.</span> <span class="nav-text">Arthas 解决什么问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Arthas-的安装与启动"><span class="nav-number">2.</span> <span class="nav-text">Arthas 的安装与启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Arthas-JVM-相关命令"><span class="nav-number">3.</span> <span class="nav-text">Arthas JVM 相关命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dashboard-命令"><span class="nav-number">3.1.</span> <span class="nav-text">dashboard 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#thread-命令"><span class="nav-number">3.2.</span> <span class="nav-text">thread 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jvm-命令"><span class="nav-number">3.3.</span> <span class="nav-text">jvm 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sysprop-命令"><span class="nav-number">3.4.</span> <span class="nav-text">sysprop 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getstatic-命令"><span class="nav-number">3.5.</span> <span class="nav-text">getstatic 命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>

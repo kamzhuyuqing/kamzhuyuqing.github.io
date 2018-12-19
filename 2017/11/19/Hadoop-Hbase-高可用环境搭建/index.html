@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="hadoop,大数据,hbase,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述。因为公司项目数据量相对较大，所以需要利用hbase进行存储，前几个月有进行Hadoop+Hbase的高可用搭建。但是因为通讯那边需要写比较多的功能，后来又跑去负责netty相关的通讯模块。这几周重新搭建这个集群，发现还是记不起很多细节和步骤。俗话说的好，好记性不如烂笔头。不如就利用空余时间把重要的步骤都记录下来。 环境描述。技术博客的话，很多人都不愿意说明白资源环境，很容易让人看得一头雾水。">
+<meta name="keywords" content="hadoop,大数据,hbase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop+Hbase 高可用环境搭建">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="概述。因为公司项目数据量相对较大，所以需要利用hbase进行存储，前几个月有进行Hadoop+Hbase的高可用搭建。但是因为通讯那边需要写比较多的功能，后来又跑去负责netty相关的通讯模块。这几周重新搭建这个集群，发现还是记不起很多细节和步骤。俗话说的好，好记性不如烂笔头。不如就利用空余时间把重要的步骤都记录下来。 环境描述。技术博客的话，很多人都不愿意说明白资源环境，很容易让人看得一头雾水。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/Hadoop-Hbase-高可用环境搭建/1.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/Hadoop-Hbase-高可用环境搭建/4.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/Hadoop-Hbase-高可用环境搭建/5.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/Hadoop-Hbase-高可用环境搭建/6.png">
+<meta property="og:updated_time" content="2018-12-19T13:14:25.332Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hadoop+Hbase 高可用环境搭建">
+<meta name="twitter:description" content="概述。因为公司项目数据量相对较大，所以需要利用hbase进行存储，前几个月有进行Hadoop+Hbase的高可用搭建。但是因为通讯那边需要写比较多的功能，后来又跑去负责netty相关的通讯模块。这几周重新搭建这个集群，发现还是记不起很多细节和步骤。俗话说的好，好记性不如烂笔头。不如就利用空余时间把重要的步骤都记录下来。 环境描述。技术博客的话，很多人都不愿意说明白资源环境，很容易让人看得一头雾水。">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/Hadoop-Hbase-高可用环境搭建/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/">
+
+
+
+
+
+  <title>Hadoop+Hbase 高可用环境搭建 | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2017/11/19/Hadoop-Hbase-高可用环境搭建/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hadoop+Hbase 高可用环境搭建</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-19T21:31:58+08:00">
+                2017-11-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述。"><a href="#概述。" class="headerlink" title="概述。"></a>概述。</h2><p>因为公司项目数据量相对较大，所以需要利用hbase进行存储，前几个月有进行Hadoop+Hbase的高可用搭建。但是因为通讯那边需要写比较多的功能，后来又跑去负责netty相关的通讯模块。这几周重新搭建这个集群，发现还是记不起很多细节和步骤。俗话说的好，好记性不如烂笔头。不如就利用空余时间把重要的步骤都记录下来。</p>
+<h2 id="环境描述。"><a href="#环境描述。" class="headerlink" title="环境描述。"></a>环境描述。</h2><p>技术博客的话，很多人都不愿意说明白资源环境，很容易让人看得一头雾水。由于这次试验的目的是将高可用的环境搭建起来，我利用VBOX 虚拟了三个独立虚拟主机，配置都不高，都是1G内存+100G硬盘。下面用一个简单的列表说明:</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th style="text-align:center">ip</th>
+<th style="text-align:center">memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>node1</td>
+<td style="text-align:center">192.168.0.176</td>
+<td style="text-align:center">1g</td>
+</tr>
+<tr>
+<td>node2</td>
+<td style="text-align:center">192.168.0.177</td>
+<td style="text-align:center">1g</td>
+</tr>
+<tr>
+<td>node3</td>
+<td style="text-align:center">192.168.0.178</td>
+<td style="text-align:center">1g</td>
+</tr>
+</tbody>
+</table>
+<p>其中node1,node2 为namenode。node1,node2,node3 同时为datanode。</p>
+<p>接下来是说一下我们用的Hadoop 版本和 Habse 版本，我们用的Hadoop 版本是2.5.1，用的hbase版本是0.98，zookeeper 则是3.4.6</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>我们这篇文章的主要重点还是讲一下Hadoop 和 Hbase 的搭建与启动。前期的准备可能讲的不是那么细节。</p>
+<h3 id="配置host"><a href="#配置host" class="headerlink" title="配置host"></a>配置host</h3><p>使用命令  <code>vim /etc/hosts</code> 编辑host文件，添加如下内容:<br>192.168.0.176 node1<br>192.168.0.177 node2<br>192.168.0.178 node3<br>写完之后进行保存，并同步到其他两台机器中，或者在另外两台机器上进行相同的编辑。</p>
+<h3 id="配置免登陆"><a href="#配置免登陆" class="headerlink" title="配置免登陆"></a>配置免登陆</h3><p>因为搭建的是集群分布，所以各个节点之间要进行通讯，为了避免每次启动节点需要输入密码，所以要配置免登陆。配置免登陆的做法也相对简单，就是每台机器都生成rsa 或者 dsa 私钥和公钥，然后将这台机器的公钥拷贝到其他机器中，并加入到认证列表 <code>authorized_keys</code> 中。我们来讲一下具体的做法,以node1 为例:</p>
+<ul>
+<li>1）首先进入目录: <code>cd ~/.ssh</code></li>
+<li>2）利用命令 <code>ssh-keygen</code> 在每台机子上生成公钥和私钥: <code>ssh-keygen -t dsa</code> （这里我使用dsa加密方式）</li>
+<li>3）将node2 node3 的id_dsa.pub 公钥拷贝到node1。<br><code>scp ~/.ssh/id_dsa.pub root@node1:~/.ssh/id_dsa.pub.node2</code>, <code>scp ~/.ssh/id_dsa.pub root@node1:~/.ssh/id_dsa.pub.node3</code><br>这样我们就能在node1 的.ssh 将三个公钥文件都加入 authorized_keys，若无authorized_keys 文件，则手动创建。</li>
+<li>4) 利用 cat 命令将三个文件追加到 authorized_keys。这里我只写一个例子: <code>cat ./id_dsa.pub.node2 &gt;&gt; authorized_keys</code>。</li>
+</ul>
+<p>至此。这样node2和node3 登录node1的话 不用密码便可以登录了。</p>
+<h3 id="配置zookeeper"><a href="#配置zookeeper" class="headerlink" title="配置zookeeper"></a>配置zookeeper</h3><h4 id="zookeeper-概述"><a href="#zookeeper-概述" class="headerlink" title="zookeeper 概述"></a>zookeeper 概述</h4><p><code>zookeeper</code> 是一款分布式协调服务，在诸多分布式系统中扮演重要的协调角色。主要作用有：<code>命名服务</code>, <code>分布式锁</code>, <code>订阅/发布服务</code>,<code>均衡负载</code> 等作用。zookeeper 在Hadoop 中的作用主要是NameNode与ResourceManager的主备切换。而在Hbase 同样是主要用于HMaster的选举以及 Region 的状态管理。</p>
+<h4 id="配置分布式zookeeper-集群。"><a href="#配置分布式zookeeper-集群。" class="headerlink" title="配置分布式zookeeper 集群。"></a>配置分布式zookeeper 集群。</h4><p>因为zookeeper 在Hadoop 和 Hbase 中都显得很重要，所以zookeeper 自身的稳定性与容灾能力都很重要，很有必要配置分布式集群。一个集群中只有一个 <strong><code>Master</code></strong>, 其余都是 <strong><code>follower</code></strong> 或者<strong><code>Observer</code></strong>。话不多说我们开始配置。</p>
+<ul>
+<li>下载就不用多说了吧，这里我们利用wget 命令进行下载，并将它放在 /home/apps/svr 目录中: <code>wget -P /home/apps/svr https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz</code></li>
+<li>利用 tar 命令进行解压 : <code>tar -xvf /home/apps/svr/zookeeper-3.4.6.tar.gz</code> . 建立软连接 ln -s zookeeper-3.4.6 zookeeper</li>
+<li>进入 /home/apps/svr/zookeeper 目录中。查看目录文件,如下:<div><img style="float:left" src="Hadoop-Hbase-高可用环境搭建/1.png"></div><br><div style="clear:both;height:0px"><br></div></li>
+<li><p>我们只要关注 bin 文件夹 以及 conf 文件夹，我们先进入conf 文件夹 ，编辑 <strong>zoo.cfg</strong> 文件，配置如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"># The number of milliseconds of each tick</span><br><span class="line">tickTime=2000</span><br><span class="line"># The number of ticks that the initial </span><br><span class="line"># synchronization phase can take</span><br><span class="line">initLimit=10</span><br><span class="line"># The number of ticks that can pass between </span><br><span class="line"># sending a request and getting an acknowledgement</span><br><span class="line">syncLimit=5</span><br><span class="line"># the directory where the snapshot is stored.</span><br><span class="line"># do not use /tmp for storage, /tmp here is just </span><br><span class="line"># example sakes.</span><br><span class="line">dataDir=/home/apps/data/zookeeper</span><br><span class="line"># the port at which the clients will connect</span><br><span class="line">clientPort=2181</span><br><span class="line"># the maximum number of client connections.</span><br><span class="line"># increase this if you need to handle more clients</span><br><span class="line">#maxClientCnxns=60</span><br><span class="line">#</span><br><span class="line"># Be sure to read the maintenance section of the </span><br><span class="line"># administrator guide before turning on autopurge.</span><br><span class="line">#</span><br><span class="line"># http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance</span><br><span class="line">#</span><br><span class="line"># The number of snapshots to retain in dataDir</span><br><span class="line">#autopurge.snapRetainCount=3</span><br><span class="line"># Purge task interval in hours</span><br><span class="line"># Set to &quot;0&quot; to disable auto purge feature</span><br><span class="line">#autopurge.purgeInterval=1</span><br><span class="line"></span><br><span class="line">server.1=node1:2888:3888</span><br><span class="line">server.2=node2:2888:3888</span><br><span class="line">server.3=node3:2888:3888</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其中 端口2181 为为Client 提供服务的端口，而2888 为leader监听follower的端口，3888则为 选举leader 角色的端口。接下来因为集群中的每个zookeeper 要依赖于myid 来标识自己，所以需要在zookeeper的存放数据的文件夹下,也就是上图 配置中 <strong>dataDir</strong> 所指向的目录中创建myid 文件，这里我们node1 的myid 写1 ,node2 写2, node 3就写3 好了。</p>
+</li>
+<li><p>接下来我们来开始启动zookeeper。进入zookeeper 安装目录下的/bin 目录,使用 <code>./zkServer.sh start</code>, node2, node3 也是如此:</p>
+<div><img style="float:left" src="Hadoop-Hbase-高可用环境搭建/4.png"></div><br><div style="clear:both;height:0px"><br></div>
+</li>
+<li><p>我们可以使用 <code>./zkServer.sh status</code> 命令来查看状态的启动后的角色，前面我们已经说到了，一个集群内只有一个 <strong>Master</strong>，其他正常来说应该都是 <strong>follower</strong>。</p>
+<div><img style="float:left" src="Hadoop-Hbase-高可用环境搭建/5.png"></div><br><div style="clear:both;height:0px"><br></div>
+</li>
+<li><p>但是我们可能会遇到上面的错误，这是因为node1 node2 node3 机器之间存在防火墙，我们可以将zookeeper 的三个端口都打开，或者更简单一点我们直接想关掉防火墙。<code>service iptables stop</code>。</p>
+<div><img style="float:left" src="Hadoop-Hbase-高可用环境搭建/6.png"></div><br><div style="clear:both;height:0px"><br></div>
+</li>
+<li><p>我们再来看看 zookeeper 的状态。至此，会看到有一台为master,其他两台为follower，zookeeper 搭建完成。</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/7.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+</li>
+</ul>
+<h2 id="搭建Hadoop-集群。"><a href="#搭建Hadoop-集群。" class="headerlink" title="搭建Hadoop 集群。"></a>搭建Hadoop 集群。</h2><p>上面已经准备好， 现在我们就开始这篇文章的重头戏。其实搭建Hadoop也不算什么复杂的事情，只是很容易掉坑里。我们这里使用的Hadoop是 2.5.1。</p>
+<h3 id="Hadoop概述"><a href="#Hadoop概述" class="headerlink" title="Hadoop概述"></a>Hadoop概述</h3><p>Hadoop 并不是单指一个框架工具，而是是一个开源的生态系统，是一个分布式运行系统，基于java 开发。成员包括: <strong>HDFS</strong>, <strong>HBase</strong>, <strong>MapReduce</strong>, <strong>Hive</strong> 等等。<br>其中我们需要着重了解的是HDFS 和 Hbase。这里我们先讲HDFS。HDFS的设计思想来源于谷歌的GFS(Google File System), 是一款分布式文件系统框架。他的特点是:</p>
+<ul>
+<li>保存多个副本(默认是三个)，当某个数据副本不可用，可以使用其余的副本继续提供数据服务。而且副本有容灾能力，可以自动恢复。</li>
+<li>HDFS默认会将文件分割成block，64M为1个block。但是如果小文件太多，那内存的负担会很重</li>
+<li>HDFS 采用Master-Slave 架构， 角色有 <strong>NameNode</strong>, <strong>SecondaryNameNode</strong>, <strong>DataNode</strong>。其中，<strong>NameNode</strong> 类似一个大领导，管理元数据与分配策略，处理客户端的请求; <strong>SecondaryNameNode</strong><br>就是 <strong>NameNode</strong> 的左右手，是<strong>NameNode</strong>的冷备份。而<strong>DataNode</strong> 则是小弟，负责读写客户需要的数据。如下图:<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/8.jpg”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+</li>
+</ul>
+<h3 id="Hadoop-高可用集群搭建"><a href="#Hadoop-高可用集群搭建" class="headerlink" title="Hadoop 高可用集群搭建"></a>Hadoop 高可用集群搭建</h3><p>我们下载好hadoop 之后，解压在/home/apps/svr 中，并像上面一样建立软连接。也就是说现在hadoop的安装目录我这次安装在 /home/apps/svr/hadoop。这里我们暂时先只是将hadoop简单的配置起来，所以只要关注<br><strong>core-site.xml</strong> , <strong>hdfs-site.xml</strong>  <strong>slave</strong>配置。</p>
+<ul>
+<li><p>我们先进入hadoop 的配置文件目录 <code>cd /home/apps/svr/hadoop/etc/hadoop/</code> ,我们先配置hadoop-env.sh 的JDK 路径先配置好.因为如果使用hadoop默认的环境变量 JAVA_HOME 可能会出现很多问题。所以我们还是需要配置一下</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/9.png”/&gt;</div><br><div style="clear:both;height:0px"></div>
+</li>
+<li><p>配置core-site.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.defaultFS<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://tdtest<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义默认的文件系统主机和端口,默认端口是9000<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.journalnode.edits.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/apps/data/journal<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义edit 文件存放目录<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>ha.zookeeper.quorum<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>node1:2181,node2:2181,node3:2181<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义zookeeper 集群<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/apps/data/hadoop<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义hadoop 临时文件夹<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置hdfs-site.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.nameservices<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>tdtest<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义空间的逻辑名称 <span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.ha.namenodes.tdtest<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>nn1,nn2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义集群中所有namenode的名称 <span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.rpc-address.tdtest.nn1<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>node1:8020<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义namenode nn1的rpc地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.rpc-address.tdtest.nn2<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>node2:8020<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义namenode nn2的rpc地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> <span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.http-address.tdtest.nn1<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>node1:50070<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义namenode nn1的http地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span>   </span><br><span class="line">      </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.http-address.tdtest.nn2<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>node2:50070<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义namenode nn2的http 地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.shared.edits.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>qjournal://node1:8485;node2:8485;node3:8485/tdtest<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义namenode 读取edits文件的地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.client.failover.proxy.provider.tdtest<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>配置HDFS连接一个activce namenode的java类<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.ha.fencing.methods<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>sshfence<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义联通各个节点的方式，这里是ssh的方式<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.ha.fencing.ssh.private-key-files<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/root/.ssh/id_dsa<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>定义ssh的私钥地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.ha.automatic-failover.enabled<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>是否支持自动修复<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置slave 配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">node1</span><br><span class="line">node2</span><br><span class="line">node3</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在node1 配置好之后，同步到其他两台机子上。接下来我们来试着启动一下。</p>
+<ul>
+<li>首次启动<ul>
+<li>进入/home/apps/svr/hadoop/sbin/,我们可以分别在三台机子上使用<code>./hadoop-daemon.sh start journalnode</code> 启动journalnode。</li>
+<li>在node1 上使用命令 <code>hdfs namenode -format</code> 格式化namenode (这是首次启动必须做的)。 然后在node1上使用 <code>./hadoop-daemon.sh start namenode</code> 启动node1 上的namenode。</li>
+<li>然后在我们将node1 的namenode 同步到node2， 这里我们使用 <code>hdfs namenode -bootstrapStandby</code> 同步。这个步骤是首次启动必须的。</li>
+<li>接下来我们在一台机子上(这里我们是选择在node1上)，使用 <code>hdfs zkfc -formatZK</code> 进行 主备切换机制的格式化，这个也是首次启动所必须的。</li>
+<li>最后我们先使用<code>./stop-dfs.sh</code> 关闭所有hadoop相关的进程， 再利用 <code>./start-dfs.sh</code> 启动所有组件(这里不包括yarn 等组件)。我们来看一下效果:<br>输入 <a href="http://192.168.0.176:50070" target="_blank" rel="noopener">http://192.168.0.176:50070</a>  查看节点状态:<br>  <div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/10.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div><br>这里我们可以看见这个节点是<strong>active</strong>。我们再来看看另外一个节点：<a href="http://192.168.0.177:50070" target="_blank" rel="noopener">http://192.168.0.177:50070</a><br>   <div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/11.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div><br>如果成功的话，这里不出意外状态是 <strong>standby</strong>.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>非首次启动:如果不是首次启动的话，则直接可以使用 <code>./start-dfs.sh</code> 启动相关组件，不用再次格式化namenode,zkfc等。</li>
+</ul>
+<h3 id="Hadoop-搭建总结"><a href="#Hadoop-搭建总结" class="headerlink" title="Hadoop 搭建总结"></a>Hadoop 搭建总结</h3><p>至此我们已经完成了hadoop 高可用的简单搭建，涉及到的参数配置也相对简单，还有许多配置值得我们去研究。接下来我们讲hbase的高可用集群配置。</p>
+<h2 id="搭建Hbase-集群"><a href="#搭建Hbase-集群" class="headerlink" title="搭建Hbase 集群"></a>搭建Hbase 集群</h2><h3 id="Hbase简介"><a href="#Hbase简介" class="headerlink" title="Hbase简介"></a>Hbase简介</h3><p>Hbase是一个高可靠性、高性能、面向列、可伸缩的分布式存储系统。我们来看一下Hbase 与Hadoop 配合的架构图:</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/15.jpg”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+<p>为什么说Hbase 是基于列式存储的呢，我们来看一张Hbase 的逻辑视图便于我们的了解:</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/16.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+<ul>
+<li>RowKey:行键，Table的主键，Table中的记录按照Row Key排序。</li>
+<li>Timestamp: 时间戳，每次数据操作对应的时间戳，可以看作是数据的版本号。</li>
+<li>Column Family：列簇，Table在水平方向有一个或者多个Column Family组成，一个Column Family中可以由任意多个Column组成。</li>
+</ul>
+<p>相对于Hadoop 集群来说，Hbase 搭建相对简单。我们在这里省略Hbase的下载与安装，把焦点放在hbase的核心配置:在hbase的目录下我们进入 conf 文件夹。可以看见<strong>hbase-site.xml</strong>配置文件和环境配置 <strong>hbase-env.sh</strong> 以及 <strong>regionservers</strong></p>
+<h3 id="hbase-site-xml-配置"><a href="#hbase-site-xml-配置" class="headerlink" title="hbase-site.xml 配置"></a>hbase-site.xml 配置</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://tdtest/hbase<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>habse的持久化地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.cluster.distributed<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>hbase 是否分布式集群<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.quorum<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>node1,node2,node3<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>zookeeper 集群地址<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="hbase-env-sh-环境配置"><a href="#hbase-env-sh-环境配置" class="headerlink" title="hbase-env.sh 环境配置"></a>hbase-env.sh 环境配置</h3><p>我们还需要配置一下hbase的运行环境, <code>vim hbase-env.sh</code>:</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/12.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+<p>如图，我们需要配置jdk, hadoop 的环境，还有不使用hbase自带的zookeeper ，这个比较重要。</p>
+<h3 id="regionservers-配置"><a href="#regionservers-配置" class="headerlink" title="regionservers 配置"></a>regionservers 配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ode1</span><br><span class="line">node2</span><br><span class="line">node3</span><br></pre></td></tr></table></figure>
+<h3 id="启动hbase-服务"><a href="#启动hbase-服务" class="headerlink" title="启动hbase 服务"></a>启动hbase 服务</h3><p>接下来我们进入 /bin 目录，启动hbase。 使用命令 <code>./start-hbase.sh</code>。</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/13.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+<p>启动完之后，输入 <a href="http://192.168.0.176:60010" target="_blank" rel="noopener">http://192.168.0.176:60010</a> 地址，查看hbase 的启动状态:</p>
+<div>&lt;img style=’float:left’src=”Hadoop-Hbase-高可用环境搭建/14.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+
+<p>如图所示，我们可以看见hbase 的节点状态。至此，hbase 的搭建就算完成了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在这篇文章中，我们从零到一完成了简单的 Hadoop+Hbase+Zookeeper 的高可用搭建，当然hadoop 和 hbase 的应用远不止于此。我们要多实践它的更多用途，后面我们会结合Java客户端，与hadoop的CDH版本等多讲讲它的生态圈以及实际应用。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          
+            <a href="/tags/hbase/" rel="tag"># hbase</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/01/linux下载命令-wget/" rel="next" title="linux下载命令--wget">
+                <i class="fa fa-chevron-left"></i> linux下载命令--wget
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/30/Hadoop-shell命令/" rel="prev" title="Hadoop shell命令">
+                Hadoop shell命令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述。"><span class="nav-number">1.</span> <span class="nav-text">概述。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#环境描述。"><span class="nav-number">2.</span> <span class="nav-text">环境描述。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备"><span class="nav-number">3.</span> <span class="nav-text">准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置host"><span class="nav-number">3.1.</span> <span class="nav-text">配置host</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置免登陆"><span class="nav-number">3.2.</span> <span class="nav-text">配置免登陆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置zookeeper"><span class="nav-number">3.3.</span> <span class="nav-text">配置zookeeper</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#zookeeper-概述"><span class="nav-number">3.3.1.</span> <span class="nav-text">zookeeper 概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置分布式zookeeper-集群。"><span class="nav-number">3.3.2.</span> <span class="nav-text">配置分布式zookeeper 集群。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建Hadoop-集群。"><span class="nav-number">4.</span> <span class="nav-text">搭建Hadoop 集群。</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hadoop概述"><span class="nav-number">4.1.</span> <span class="nav-text">Hadoop概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hadoop-高可用集群搭建"><span class="nav-number">4.2.</span> <span class="nav-text">Hadoop 高可用集群搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hadoop-搭建总结"><span class="nav-number">4.3.</span> <span class="nav-text">Hadoop 搭建总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建Hbase-集群"><span class="nav-number">5.</span> <span class="nav-text">搭建Hbase 集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hbase简介"><span class="nav-number">5.1.</span> <span class="nav-text">Hbase简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hbase-site-xml-配置"><span class="nav-number">5.2.</span> <span class="nav-text">hbase-site.xml 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hbase-env-sh-环境配置"><span class="nav-number">5.3.</span> <span class="nav-text">hbase-env.sh 环境配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#regionservers-配置"><span class="nav-number">5.4.</span> <span class="nav-text">regionservers 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动hbase-服务"><span class="nav-number">5.5.</span> <span class="nav-text">启动hbase 服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,AQS">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述AQS 全称 AbstractQueueSynchronizer(队列同步器)，是用来构建其他锁和同步组件的基础框架。AQS 使用一个 volatile int state 变量来表示同步状态。并提供对应的 getState, setState(int newState) 以及 compareAndSetState 来对 state 进行状态管理。AQS本身没有实现任何接口，主要使用方式是继承">
+<meta name="keywords" content="java,AQS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发队列同步器AQS(一)">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="概述AQS 全称 AbstractQueueSynchronizer(队列同步器)，是用来构建其他锁和同步组件的基础框架。AQS 使用一个 volatile int state 变量来表示同步状态。并提供对应的 getState, setState(int newState) 以及 compareAndSetState 来对 state 进行状态管理。AQS本身没有实现任何接口，主要使用方式是继承">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/Java并发编程队列同步器AQS-1/0DFE7AA88DBEA0365F5532B4AC4FFF17.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/Java并发编程队列同步器AQS-1/F2650AD46DF73DBC30F59983C778419F.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/Java并发编程队列同步器AQS-1/BFCAFADC3A5163A8006B674D5CAB8A60.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/Java并发编程队列同步器AQS-1/AF8E8C2D7371BD3921145A1B163148EE.jpg">
+<meta property="og:updated_time" content="2018-12-19T13:14:25.334Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发队列同步器AQS(一)">
+<meta name="twitter:description" content="概述AQS 全称 AbstractQueueSynchronizer(队列同步器)，是用来构建其他锁和同步组件的基础框架。AQS 使用一个 volatile int state 变量来表示同步状态。并提供对应的 getState, setState(int newState) 以及 compareAndSetState 来对 state 进行状态管理。AQS本身没有实现任何接口，主要使用方式是继承">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/Java并发编程队列同步器AQS-1/0DFE7AA88DBEA0365F5532B4AC4FFF17.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/">
+
+
+
+
+
+  <title>Java并发队列同步器AQS(一) | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2018/05/08/Java并发编程队列同步器AQS-1/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java并发队列同步器AQS(一)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-08T23:36:31+08:00">
+                2018-05-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>AQS 全称 AbstractQueueSynchronizer(队列同步器)，是用来构建其他锁和同步组件的基础框架。AQS 使用一个 <strong><em>volatile int state</em></strong> 变量来表示同步状态。并提供对应的 <strong><em>getState</em></strong>, <strong><em>setState(int newState)</em></strong> 以及 <strong><em>compareAndSetState</em></strong> 来对 state 进行状态管理。AQS本身没有实现任何接口，主要使用方式是继承。既支持实现独占式锁，又支持共享式锁。这样就很好的实现不同的同步组件(ReentrantLock, ReadWriteLock等)。</p>
+<p>同步器是实现锁的关键，简单点说，在锁里面实现聚合同步器，利用组合类的方式，锁面向使用者，而同步器是锁的具体实现，这样对于使用者来说，屏蔽了同步状态的管理，线程的排队，等待与唤醒。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> state;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getState</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> state;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">setState</span><span class="params">(<span class="keyword">int</span> newState)</span> </span>&#123;</span><br><span class="line">    state = newState;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSetState</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// See below for intrinsics setup to support this</span></span><br><span class="line">    <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, stateOffset, expect, update);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="同步器接口与模板方法示例"><a href="#同步器接口与模板方法示例" class="headerlink" title="同步器接口与模板方法示例"></a>同步器接口与模板方法示例</h2><p>同步器的设计是基于<strong><em>模板方法</em></strong>，使用者需要先继承同步器并重写指定的方法，而模板方法则会调用这些重写的方法。同步器将会组合在自定义同步组件中，自定义通过调用模板方法实现状态同步的功能。<br>使用同步器方法的同时使用 <strong><em>getState</em></strong>, <strong><em>setState(int newState)</em></strong> 以及 <strong><em>comoareAndSetStatte</em></strong> 来修改与访问同步状态。而模板方法一般分为三类</p>
+<ul>
+<li>独占式的获取与释放同步状态</li>
+<li>共享式的获取与释放同步状态</li>
+<li>获取同步队列中的线程集合。</li>
+</ul>
+<p>我们下来看一下模板方法:</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>方法描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void acquire(int arg)</td>
+<td>独占式获取同步状态。</td>
+</tr>
+<tr>
+<td>void acquireInterruptibly(int arg)</td>
+<td>可中断式的获取同步状态。</td>
+</tr>
+<tr>
+<td>boolean tryAcquireNanos(int arg, int nanos)</td>
+<td>在acquireInterruptibly的基础上加入超时机制，如果超时还未获取同步状态，返回false</td>
+</tr>
+<tr>
+<td>void acquireShard(int arg)</td>
+<td>共享式获取同步状态</td>
+</tr>
+<tr>
+<td>void acquireShardInterruptible(int arg)</td>
+<td>在acquireShard的基础上加入中断机制。</td>
+</tr>
+<tr>
+<td>void tryAcquireShardNanos(int arg, int nanos)</td>
+<td>在acquireShardInterruptible的基础上加入超时机制，如果超时还未获取同步状态，返回false</td>
+</tr>
+<tr>
+<td>boolean release(int arg)</td>
+<td>独占式的释放共享状态，如果成功释同步状态之后，将同步队列唤醒第一个等待线程。</td>
+</tr>
+<tr>
+<td>boolean releaseShard(int arg)</td>
+<td>共享式释放同步状态。</td>
+</tr>
+<tr>
+<td>Collection<thread> getQueuedThreads()</thread></td>
+<td>获取同步队列上的线程集合。</td>
+</tr>
+</tbody>
+</table>
+<p>还有提供的可重写的方法:(注意这些方法都是protected)</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>方法描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void tryAcquire(int arg)</td>
+<td>独占式的获取同步状态，实现该方法需要查询状态，并判断状态是否符合预期，最后利用CAS设置同步状态</td>
+</tr>
+<tr>
+<td>void tryRelease(int arg)</td>
+<td>独占式释放同步状态，等待获取同步状态的线程将有机会获取同步状态</td>
+</tr>
+<tr>
+<td>int tryAcquireShard(int arg)</td>
+<td>共享式的获取同步状态，当返回值大于0的时候，表示获取成功。</td>
+</tr>
+<tr>
+<td>int tryReleaseShard(int arg)</td>
+<td>共享式的释放同步状态</td>
+</tr>
+<tr>
+<td>boolean isHeldExclisively()</td>
+<td>一般用来判断同步状态是否被占用。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="怎么样实现一个简单同步组件"><a href="#怎么样实现一个简单同步组件" class="headerlink" title="怎么样实现一个简单同步组件"></a>怎么样实现一个简单同步组件</h2><p>可能上面讲了那么多理论，大家还是一头雾水，那实现一个简单同步组件的步骤有哪一些呢:</p>
+<ul>
+<li>1）声明同步器，并继承 AbstractQueuedSynchronizer。</li>
+<li>2) 重写AbstractQueuedSynchronizer 的可重写方法。</li>
+<li>3) 在同步组件中(如果是锁，一般配合Lock接口使用)利用接口方法调用同步器的模板方法和已经重写的方法。</li>
+</ul>
+<p>我们来看看简单的实现例子<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 简单互斥锁实现</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;<span class="doctag">@Author</span> Kam&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;<span class="doctag">@Date</span> 2018/5/3&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;<span class="doctag">@Version</span>&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mutex</span> <span class="keyword">implements</span> <span class="title">Lock</span></span>&#123;</span><br><span class="line">	<span class="comment">//声明同步组件</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sync</span> <span class="keyword">extends</span> <span class="title">AbstractQueuedSynchronizer</span></span>&#123;</span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="comment">//判断同步状态是否被占用</span></span><br><span class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isHeldExclusively</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> getState() == <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="comment">//尝试获取同步状态</span></span><br><span class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(compareAndSetState(<span class="number">0</span>,<span class="number">1</span>))&#123;</span><br><span class="line">				setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="comment">//尝试释放同步状态</span></span><br><span class="line">		<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">tryRelease</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (getState() == <span class="number">0</span>)&#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//设置当前</span></span><br><span class="line">			setExclusiveOwnerThread(<span class="keyword">null</span>);</span><br><span class="line">			setState(<span class="number">0</span>);</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Sync sync = <span class="keyword">new</span> Sync();</span><br><span class="line">	<span class="comment">//获取锁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		sync.acquire(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//可中断的获取锁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		sync.acquireInterruptibly(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//尝试获取锁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> sync.tryAcquire(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//尝试获取锁(超时策略)</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> sync.tryAcquireNanos(<span class="number">1</span>, unit.toNanos(time));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//释放锁</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		sync.release(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Condition <span class="title">newCondition</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>测试:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 简单互斥锁测试</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;<span class="doctag">@Author</span> Kam&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;<span class="doctag">@Date</span> 2018/5/3&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;<span class="doctag">@Version</span>&lt;/p&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MutexTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Mutex mutex = <span class="keyword">new</span> Mutex();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">incrementIndex</span><span class="params">()</span></span>&#123;</span><br><span class="line">		index++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">incrementIndexWithLock</span><span class="params">()</span></span>&#123;</span><br><span class="line">		mutex.lock();</span><br><span class="line">		index++;</span><br><span class="line">		mutex.unlock();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] arg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		CyclicBarrier  barrier = <span class="keyword">new</span> CyclicBarrier(<span class="number">11</span>);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line"></span><br><span class="line">			Runnable runnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; <span class="number">10000</span>; i++)&#123;</span><br><span class="line">						incrementIndex();</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						barrier.await();</span><br><span class="line">					&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">			Thread thread = <span class="keyword">new</span> Thread(runnable);</span><br><span class="line">			thread.start();</span><br><span class="line">		&#125;</span><br><span class="line">		barrier.await();</span><br><span class="line">		System.out.println(<span class="string">"不加锁的加法---&gt;index:"</span>+index);</span><br><span class="line">		index = <span class="number">0</span>;</span><br><span class="line">		barrier.reset();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">			Runnable runnable2 = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">					<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; <span class="number">10000</span>; i++)&#123;</span><br><span class="line">						incrementIndexWithLock();</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">try</span> &#123;</span><br><span class="line">						barrier.await();</span><br><span class="line">					&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;</span><br><span class="line">						e.printStackTrace();</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;;</span><br><span class="line">			Thread thread2 = <span class="keyword">new</span> Thread(runnable2);</span><br><span class="line">			thread2.start();</span><br><span class="line">		&#125;</span><br><span class="line">		barrier.await();</span><br><span class="line">		System.out.println(<span class="string">"加锁的加法---&gt;index:"</span>+index);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>结果:<br>不加锁的加法—&gt;index:96439<br>加锁的加法—&gt;index:100000</p>
+<p>结论:我们可以看到，实现一个互斥锁并没有想象中的难，因为AQS已经将很多复杂的同步操作透明化了。我们只要熟悉可重写的方法，和模板方法，就可以根据需求，对volatile int state 这个同步状态进行操作，实现我们想要的同步组件。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>接下来我们结合源码来讲讲同步队列，独占式获取与释放同步状态以及共享式的获取与释放同步状态等原理。</p>
+<h3 id="同步队列"><a href="#同步队列" class="headerlink" title="同步队列"></a>同步队列</h3><p>同步器通过一个FIFO的队列来完成state同步状态的管理。当线程获取同步状态失败的时候，同步器会将当前的线程以及等待信息组装成一个Node结构，并将这个Node加入同步队列，阻塞当前线程。当同步状态释放的时候，同步队列首节点的线程将会唤醒，使其可以重新尝试获取线程。(同步队列又被称为CLH队列)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">        <span class="comment">//共享</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> Node SHARED = <span class="keyword">new</span> Node();</span><br><span class="line">        <span class="comment">//独占</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> Node EXCLUSIVE = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//waitStatus 表示此节点因为超时或者中断取消竞争同步状态，并且这种状态不会再改变。</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CANCELLED =  <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//waitStatus 表示后继节点还在等待状态，如果当前节点取消竞争或者释放了同步状态，则会唤醒下个节点。</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIGNAL    = -<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//waitStatus 表示该节点处于等待队列中，如果其他线程调用了singnal()方法唤醒该节点，则该节点会被转移到同步队列</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CONDITION = -<span class="number">2</span>;</span><br><span class="line">        <span class="comment">//waitStatus 表示下一次共享状态会被无条件的传播下去</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PROPAGATE = -<span class="number">3</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//等待状态，初始值为0</span></span><br><span class="line">        <span class="keyword">volatile</span> <span class="keyword">int</span> waitStatus;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//当前节点前驱节点</span></span><br><span class="line">        <span class="keyword">volatile</span> Node prev;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//当前节点的后继节点</span></span><br><span class="line">        <span class="keyword">volatile</span> Node next;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//与当前节点关联的排队中的线程</span></span><br><span class="line">        <span class="keyword">volatile</span> Thread thread;</span><br><span class="line">        </span><br><span class="line">        ****其他代码****</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同步器包含两个节点引用: <strong><em>头结点(head)和尾节点(tail)</em></strong> ,头结点指向正在获取同步状态的节点，尾节点指向的是同步同列的最后<br>一个节点。如下图:<br><img src="Java并发编程队列同步器AQS-1/0DFE7AA88DBEA0365F5532B4AC4FFF17.jpg" alt="IMAGE"></p>
+<p>当一个线程第一次获取同步状态失败,会利用基于CAS的方法<strong><em>compareAndSetTail</em></strong>加入到同步队列的后尾，只有当前节点成功加入队列<br>才才会与tail引用建立起关联。如下图:<br><img src="Java并发编程队列同步器AQS-1/F2650AD46DF73DBC30F59983C778419F.jpg" alt="IMAGE"></p>
+<p>当队列首节点获取同步状态成功后，会从队列的头部移除，因为当前只会有一个节点可获取同步状态成功，也就不存在多线程竞争的关系，所以设置头节点并不需要使用CAS的方法，它只需要将head节点设置为原首节点的后继节点，并将原首节点的next断开。如下图:<br><img src="Java并发编程队列同步器AQS-1/BFCAFADC3A5163A8006B674D5CAB8A60.jpg" alt="IMAGE"></p>
+<h3 id="独占式的获取与释放同步状态"><a href="#独占式的获取与释放同步状态" class="headerlink" title="独占式的获取与释放同步状态"></a>独占式的获取与释放同步状态</h3><p>我们上面有提到，可以利用acquire(int arg)方法可以独占式的获取同步态，该方法对中断不敏感<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">            selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码的完成了同步状态获取，节点构造，以及加入同步队列。主要逻辑是<br>1）首先acquire调用了 自定义实现的函数tryAcquire 去获取同步状态。如果获取成功则完成退出函数<br>2) 如果获取失败，则调用addWaiter(Node.EXCLISIVE)构建节点，并放置到队列尾部。<br>3) 将上一步的节点以CAS的方式获取同步状态。如果获取成功则返回<br>4) 如果获取同步状态失败则阻塞节点中的线程。当前驱节点释放同步状态后则会重新唤醒该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">addWaiter</span><span class="params">(Node mode)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//构建独占式节点</span></span><br><span class="line">        Node node = <span class="keyword">new</span> Node(Thread.currentThread(), mode);</span><br><span class="line">        <span class="comment">// Try the fast path of enq; backup to full enq on failure</span></span><br><span class="line">        Node pred = tail;</span><br><span class="line">        <span class="comment">//判断尾节点是否为空</span></span><br><span class="line">        <span class="keyword">if</span> (pred != <span class="keyword">null</span>) &#123;</span><br><span class="line">            node.prev = pred;</span><br><span class="line">            <span class="comment">//如果尾节点不为空，则利用CAS设置尾节点。</span></span><br><span class="line">            <span class="keyword">if</span> (compareAndSetTail(pred, node)) &#123;</span><br><span class="line">                pred.next = node;</span><br><span class="line">                <span class="keyword">return</span> node;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果尾节点为空，则当前队列为空队列，构建新的队列。</span></span><br><span class="line">        enq(node);</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">enq</span><span class="params">(<span class="keyword">final</span> Node node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            Node t = tail;</span><br><span class="line">            <span class="keyword">if</span> (t == <span class="keyword">null</span>) &#123; <span class="comment">// Must initialize</span></span><br><span class="line">                <span class="comment">//如果尾节点为空，则构建同步器队列</span></span><br><span class="line">                <span class="keyword">if</span> (compareAndSetHead(<span class="keyword">new</span> Node()))</span><br><span class="line">                    tail = head;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                node.prev = t;</span><br><span class="line">                <span class="comment">//队列构建后则利用CAS加入队列尾部</span></span><br><span class="line">                <span class="keyword">if</span> (compareAndSetTail(t, node)) &#123;</span><br><span class="line">                    t.next = node;</span><br><span class="line">                    <span class="keyword">return</span> t;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>代码主要使用compareAndSetTail(Node expect, Node Update)方法来保证节点正确加入队列尾部。而enq方法主要是在队列不存在<br>的时候先构建队列并且利用死循环加入队列尾部。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">acquireQueued</span><span class="params">(<span class="keyword">final</span> Node node, <span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> failed = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">boolean</span> interrupted = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">                <span class="keyword">final</span> Node p = node.predecessor();</span><br><span class="line">                <span class="comment">//前驱节点是否为已经获取到同步状态的head节点，如果是，且利用tryAcquire获取同步状态成功</span></span><br><span class="line">                <span class="comment">//则将当前节点设置为已经获取到同步状态的head节点，且返回false。</span></span><br><span class="line">                <span class="keyword">if</span> (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">                    <span class="comment">//如果前驱节点是已经获取到同步状态的head节点，则直接</span></span><br><span class="line">                    setHead(node);</span><br><span class="line">                    p.next = <span class="keyword">null</span>; <span class="comment">// help GC</span></span><br><span class="line">                    failed = <span class="keyword">false</span>;</span><br><span class="line">                    <span class="keyword">return</span> interrupted;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//shouldParkAfterFailedAcquire 判断线程是否应该挂起</span></span><br><span class="line">                <span class="comment">//如果线程需要挂起则将调用 parkAndCheckInterrupt挂起</span></span><br><span class="line">                <span class="comment">//如果被中断挂起被中断过，则返回true</span></span><br><span class="line">                <span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                    parkAndCheckInterrupt())</span><br><span class="line">                    interrupted = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (failed)</span><br><span class="line">                <span class="comment">//如果被中断，则取消竞争</span></span><br><span class="line">                cancelAcquire(node);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在 acquireQueued函数我们可以看到，队列维护了FIFO的原则，只有前驱节点是头结点的节点才可以尝试去获取同步状态。<br>我们总结独占式同步状态获取主流程图。如下<br><img src="Java并发编程队列同步器AQS-1/AF8E8C2D7371BD3921145A1B163148EE.jpg" alt="IMAGE"></p>
+<h2 id="独占式释放同步状态"><a href="#独占式释放同步状态" class="headerlink" title="独占式释放同步状态"></a>独占式释放同步状态</h2><p>当线程成功获取锁之后，执行完自己的代码逻辑，就需要释放同步状态了。这样后面的节点就可以继续获取同步状态了。同步器调用<br>release(int arg)来释放同步状态<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">release</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (tryRelease(arg)) &#123;</span><br><span class="line">            <span class="comment">//如果释放同步状态成功</span></span><br><span class="line">            Node h = head;</span><br><span class="line">            <span class="keyword">if</span> (h != <span class="keyword">null</span> &amp;&amp; h.waitStatus != <span class="number">0</span>)</span><br><span class="line">                <span class="comment">//唤醒后续节点，让后续节点可以继续获取同步状态</span></span><br><span class="line">                unparkSuccessor(h);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，我们对AQS的同步队列，以及独占式的获取与释放同步状态有一定的了解，我们后续会讲共享式的获取以及释放同步状态。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/并发/" rel="tag"># 并发</a>
+          
+            <a href="/tags/AQS/" rel="tag"># AQS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/26/Java-并发编程-ThreadLocal的使用/" rel="next" title="Java并发编程之ThreadLocal的使用">
+                <i class="fa fa-chevron-left"></i> Java并发编程之ThreadLocal的使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步器接口与模板方法示例"><span class="nav-number">2.</span> <span class="nav-text">同步器接口与模板方法示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#怎么样实现一个简单同步组件"><span class="nav-number">3.</span> <span class="nav-text">怎么样实现一个简单同步组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码分析"><span class="nav-number">4.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#同步队列"><span class="nav-number">4.1.</span> <span class="nav-text">同步队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#独占式的获取与释放同步状态"><span class="nav-number">4.2.</span> <span class="nav-text">独占式的获取与释放同步状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#独占式释放同步状态"><span class="nav-number">5.</span> <span class="nav-text">独占式释放同步状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>

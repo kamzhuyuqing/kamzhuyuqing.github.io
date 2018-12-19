@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="linux,运维,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="wget的使用参数wget 可以用于网络下载，支持http/https/ftp等协议。linux下载wget各种选项分类列表  启动-V,  –version           显示wget的版本后退出-h,  –help              打印语法帮助-b,  –background        启动后转入后台执行-e,  –execute=COMMAND   执行`.wgetrc’">
+<meta name="keywords" content="linux,运维">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux下载命令--wget">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2017/11/01/linux下载命令-wget/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="wget的使用参数wget 可以用于网络下载，支持http/https/ftp等协议。linux下载wget各种选项分类列表  启动-V,  –version           显示wget的版本后退出-h,  –help              打印语法帮助-b,  –background        启动后转入后台执行-e,  –execute=COMMAND   执行`.wgetrc’">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-19T13:14:25.334Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux下载命令--wget">
+<meta name="twitter:description" content="wget的使用参数wget 可以用于网络下载，支持http/https/ftp等协议。linux下载wget各种选项分类列表  启动-V,  –version           显示wget的版本后退出-h,  –help              打印语法帮助-b,  –background        启动后转入后台执行-e,  –execute=COMMAND   执行`.wgetrc’">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2017/11/01/linux下载命令-wget/">
+
+
+
+
+
+  <title>linux下载命令--wget | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2017/11/01/linux下载命令-wget/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux下载命令--wget</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-01T21:19:23+08:00">
+                2017-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="wget的使用参数"><a href="#wget的使用参数" class="headerlink" title="wget的使用参数"></a>wget的使用参数</h2><p>wget 可以用于网络下载，支持http/https/ftp等协议。linux下载wget各种选项分类列表</p>
+<ul>
+<li>启动<br>-V,  –version           显示wget的版本后退出<br>-h,  –help              打印语法帮助<br>-b,  –background        启动后转入后台执行<br>-e,  –execute=COMMAND   执行`.wgetrc’格式的命令，wgetrc格式参见/etc/wgetrc或~/.wgetrc</li>
+<li>记录和输入文件<br>-o,  –output-file=FILE     把记录写到FILE文件中<br>-a,  –append-output=FILE   把记录追加到FILE文件中<br>-d,  –debug                打印调试输出<br>-q,  –quiet                安静模式(没有输出)<br>-v,  –verbose              冗长模式(这是缺省设置)<br>-nv, –non-verbose          关掉冗长模式，但不是安静模式<br>-i,  –input-file=FILE      下载在FILE文件中出现的URLs<br>-F,  –force-html           把输入文件当作HTML格式文件对待<br>-B,  –base=URL             将URL作为在-F -i参数指定的文件中出现的相对链接的前缀<pre><code>--sslcertfile=FILE     可选客户端证书
+--sslcertkey=KEYFILE   可选客户端证书的KEYFILE
+--egd-file=FILE        指定EGD socket的文件名
+</code></pre></li>
+<li>下载 <pre><code>--bind-address=ADDRESS   指定本地使用地址(主机名或IP，当本地有多个IP或名字时使用)
+</code></pre>-t,  –tries=NUMBER           设定最大尝试链接次数(0 表示无限制).<br>-O   –output-document=FILE   把文档写到FILE文件中<br>-nc, –no-clobber             不要覆盖存在的文件或使用.#前缀<br>-c,  –continue               接着下载没下载完的文件<pre><code>--progress=TYPE          设定进程条标记
+</code></pre>-N,  –timestamping           不要重新下载文件除非比本地文件新<br>-S,  –server-response        打印服务器的回应<pre><code>--spider                 不下载任何东西
+</code></pre>-T,  –timeout=SECONDS        设定响应超时的秒数<br>-w,  –wait=SECONDS           两次尝试之间间隔SECONDS秒<pre><code>--waitretry=SECONDS      在重新链接之间等待1...SECONDS秒
+--random-wait            在下载之间等待0...2*WAIT秒
+</code></pre>-Y,  –proxy=on/off           打开或关闭代理<br>-Q,  –quota=NUMBER           设置下载的容量限制<pre><code>--limit-rate=RATE        限定下载输率
+</code></pre></li>
+<li>目录<br>-nd  –no-directories            不创建目录<br>-x,  –force-directories         强制创建目录<br>-nH, –no-host-directories       不创建主机目录<br>-P,  –directory-prefix=PREFIX   将文件保存到目录 PREFIX/…<pre><code>--cut-dirs=NUMBER           忽略 NUMBER层远程目录
+</code></pre></li>
+<li>HTTP 选项 <pre><code>--http-user=USER      设定HTTP用户名为 USER.
+--http-passwd=PASS    设定http密码为 PASS.
+</code></pre>-C,  –cache=on/off        允许/不允许服务器端的数据缓存 (一般情况下允许).<br>-E,  –html-extension      将所有text/html文档以.html扩展名保存<pre><code>--ignore-length       忽略 `Content-Length&apos;头域
+--header=STRING       在headers中插入字符串 STRING
+--proxy-user=USER     设定代理的用户名为 USER
+--proxy-passwd=PASS   设定代理的密码为 PASS
+--referer=URL         在HTTP请求中包含 `Referer: URL&apos;头
+</code></pre>-s,  –save-headers        保存HTTP头到文件<br>-U,  –user-agent=AGENT    设定代理的名称为 AGENT而不是 Wget/VERSION.<pre><code>--no-http-keep-alive  关闭 HTTP活动链接 (永远链接).
+--cookies=off         不使用 cookies.
+--load-cookies=FILE   在开始会话前从文件 FILE中加载cookie
+--save-cookies=FILE   在会话结束后将 cookies保存到 FILE文件中
+</code></pre></li>
+<li>FTP 选项<br>-nr, –dont-remove-listing   不移走 `.listing’文件<br>-g,  –glob=on/off           打开或关闭文件名的 globbing机制<pre><code>--passive-ftp           使用被动传输模式 (缺省值).
+--active-ftp            使用主动传输模式
+--retr-symlinks         在递归的时候，将链接指向文件(而不是目录)
+</code></pre></li>
+<li>递归下载<br>-r,  –recursive          递归下载－－慎用!<br>-l,  –level=NUMBER       最大递归深度 (inf 或 0 代表无穷).<pre><code>--delete-after       在现在完毕后局部删除文件
+</code></pre>-k,  –convert-links      转换非相对链接为相对链接<br>-K,  –backup-converted   在转换文件X之前，将之备份为 X.orig<br>-m,  –mirror             等价于 -r -N -l inf -nr.<br>-p,  –page-requisites    下载显示HTML文件的所有图片</li>
+<li>递归下载中的包含和不包含(accept/reject)<br>-A,  –accept=LIST                分号分隔的被接受扩展名的列表<br>-R,  –reject=LIST                分号分隔的不被接受的扩展名的列表<br>-D,  –domains=LIST               分号分隔的被接受域的列表<pre><code>--exclude-domains=LIST       分号分隔的不被接受的域的列表
+--follow-ftp                 跟踪HTML文档中的FTP链接
+--follow-tags=LIST           分号分隔的被跟踪的HTML标签的列表
+</code></pre>-G,  –ignore-tags=LIST           分号分隔的被忽略的HTML标签的列表<br>-H,  –span-hosts                 当递归时转到外部主机<br>-L,  –relative                   仅仅跟踪相对链接<br>-I,  –include-directories=LIST   允许目录的列表<br>-X,  –exclude-directories=LIST   不被包含目录的列表<br>-np, –no-parent                  不要追溯到父目录</li>
+</ul>
+<p>————————————————–华丽分割线—————————————————————–</p>
+<h2 id="wget-的使用例子"><a href="#wget-的使用例子" class="headerlink" title="wget 的使用例子"></a>wget 的使用例子</h2><p>下面是安装阿里服务器的一些服务组件:</p>
+<ul>
+<li><p>Mysql:   wget -P /apps/svr  <a href="http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.17-linux-glibc2.5-x86_64.tar.gz" target="_blank" rel="noopener">http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.17-linux-glibc2.5-x86_64.tar.gz</a></p>
+</li>
+<li><p>Tomcat : wget -P /apps/svr <a href="https://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.0.44/bin/apache-tomcat-8.0.44.tar.gz" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.0.44/bin/apache-tomcat-8.0.44.tar.gz</a></p>
+</li>
+<li><p>Nginx : wget -P /apps/svr  <a href="http://nginx.org/download/nginx-1.13.0.tar.gz" target="_blank" rel="noopener">http://nginx.org/download/nginx-1.13.0.tar.gz</a></p>
+</li>
+<li><p>Zookeeper : wget -P /apps/svr <a href="https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz</a></p>
+</li>
+<li><p>RabbitMq : wget -P /apps/svr <a href="https://codeload.github.com/rabbitmq/rabbitmq-server/tar.gz/rabbitmq_v3_6_9" target="_blank" rel="noopener">https://codeload.github.com/rabbitmq/rabbitmq-server/tar.gz/rabbitmq_v3_6_9</a></p>
+</li>
+<li><p>Mongdb : wget -P /apps/svr/ <a href="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.4.4.tg" target="_blank" rel="noopener">https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.4.4.tg</a></p>
+</li>
+<li><p>Kafka: wget -P /apps/svr/   <a href="http://mirrors.tuna.tsinghua.edu.cn/apache/kafka/0.10.2.1/kafka-0.10.2.1-src.tgz" target="_blank" rel="noopener">http://mirrors.tuna.tsinghua.edu.cn/apache/kafka/0.10.2.1/kafka-0.10.2.1-src.tgz</a></p>
+</li>
+<li><p>Maven : wget -P /apps/svr <a href="https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz</a></p>
+</li>
+<li><p>Nexus : wget -P /apps/svr <a href="https://sonatype-download.global.ssl.fastly.net/nexus/oss/nexus-2.12.0-01-bundle.tar.gz" target="_blank" rel="noopener">https://sonatype-download.global.ssl.fastly.net/nexus/oss/nexus-2.12.0-01-bundle.tar.gz</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/运维/" rel="tag"># 运维</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/01/Java内存区域/" rel="next" title="Java内存区域">
+                <i class="fa fa-chevron-left"></i> Java内存区域
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/19/Hadoop-Hbase-高可用环境搭建/" rel="prev" title="Hadoop+Hbase 高可用环境搭建">
+                Hadoop+Hbase 高可用环境搭建 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#wget的使用参数"><span class="nav-number">1.</span> <span class="nav-text">wget的使用参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget-的使用例子"><span class="nav-number">2.</span> <span class="nav-text">wget 的使用例子</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>

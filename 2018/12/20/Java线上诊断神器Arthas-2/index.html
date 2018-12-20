@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,工具,linux,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上一篇的文章讲到了Arthas的安装启动和JVM 相关命令。这篇文章我们继续把类加载相关命令，方法监控和跟踪相关命令讲完。 类加载相关命令现版本的类加载命令包括:  1 sc命令 -&amp;gt; 查看JVM已经加载的类。 2 sm命令  -&amp;gt; 查看已经加载的类的方法。 3 dump命令 -&amp;gt; dump已加载类的bytecode到特定目录 4 redefine命令 -&amp;gt; 加载外部的.c">
+<meta name="keywords" content="java,工具,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java线上诊断神器Arthas-2">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="上一篇的文章讲到了Arthas的安装启动和JVM 相关命令。这篇文章我们继续把类加载相关命令，方法监控和跟踪相关命令讲完。 类加载相关命令现版本的类加载命令包括:  1 sc命令 -&amp;gt; 查看JVM已经加载的类。 2 sm命令  -&amp;gt; 查看已经加载的类的方法。 3 dump命令 -&amp;gt; dump已加载类的bytecode到特定目录 4 redefine命令 -&amp;gt; 加载外部的.c">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/0B17A15706A58760FE6E691516C782CF.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/A57F37478F7A672B2932EAD056CC474B.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/F89DB6BE7A1099DAC1BED862D875DB09.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/28A29E583CBD1A215D17D8239A9CD71E.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/70D21FD5EC9E6266D35DFEB64E71DD97.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/D9F56F15F675AFF0B91263668313ED84.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/F99E9C9216F30A2AF094D599EBFE8816.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/0FE931571080A5C75C13D1A1A8DE541F.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/B52E066F6286032B7E04F62ED7907452.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/C5FB19C36C6AB5A8220C187F7C640DEB.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/A4D6868E119D2DDEF80B551835E39EE4.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/EA62E7EDEB06A061A0434CF39C589FF7.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/87EAF8FC89BB45702954A2A61318375A.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/BA7E4122D66E72716E23D2F9BFEA8DF6.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/F06A4A61F57D9DDC6E3B5FDD8489A95C.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/D521BBD0D18E3E43DF085E307D66392F.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/41D45530CA1C70B5142A70E0182C9CDA.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/B514CC17C7F0B0007ECCDCF14688EC0E.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/DB55BE28441653B393C494C82478DA54.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/2BFBB868C2B36D350008395060A97413.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/469B1C895DD3A15D4FF6930D3979AB57.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/D306904DB8030BB7192D09F0ACA19D01.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/32730C0F36AC8FF825EFCD030507DE67.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/CF28E3A5ED74FAC25601856B17ED20B2.jpg">
+<meta property="og:updated_time" content="2018-12-20T01:45:50.288Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java线上诊断神器Arthas-2">
+<meta name="twitter:description" content="上一篇的文章讲到了Arthas的安装启动和JVM 相关命令。这篇文章我们继续把类加载相关命令，方法监控和跟踪相关命令讲完。 类加载相关命令现版本的类加载命令包括:  1 sc命令 -&amp;gt; 查看JVM已经加载的类。 2 sm命令  -&amp;gt; 查看已经加载的类的方法。 3 dump命令 -&amp;gt; dump已加载类的bytecode到特定目录 4 redefine命令 -&amp;gt; 加载外部的.c">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/0B17A15706A58760FE6E691516C782CF.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/">
+
+
+
+
+
+  <title>Java线上诊断神器Arthas-2 | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2018/12/20/Java线上诊断神器Arthas-2/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java线上诊断神器Arthas-2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-20T09:14:25+08:00">
+                2018-12-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇的文章讲到了<strong>Arthas</strong>的安装启动和JVM 相关命令。这篇文章我们继续把<strong>类加载相关命令</strong>，<strong>方法监控和跟踪相关命令</strong>讲完。</p>
+<h2 id="类加载相关命令"><a href="#类加载相关命令" class="headerlink" title="类加载相关命令"></a>类加载相关命令</h2><p>现版本的类加载命令包括:</p>
+<ul>
+<li>1 <strong>sc命令</strong> -&gt; 查看JVM已经加载的类。</li>
+<li>2 <strong>sm命令</strong>  -&gt; 查看已经加载的类的方法。</li>
+<li>3 <strong>dump命令</strong> -&gt; dump已加载类的bytecode到特定目录</li>
+<li>4 <strong>redefine命令</strong> -&gt; 加载外部的.class文件，并redefine到JVM里面</li>
+<li>5 <strong>jad命令</strong> -&gt; 反编译已经加载类的源码</li>
+<li>6 <strong>classloader命令</strong> -&gt; 查看classloader 的继承数，urls，类加载信息等。</li>
+</ul>
+<h3 id="sc命令"><a href="#sc命令" class="headerlink" title="sc命令"></a>sc命令</h3><p> search-class的简写，可以根据类名和方法查找已经加载的类.<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式匹配</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法名表达式匹配</td>
+</tr>
+<tr>
+<td>[d]</td>
+<td>输出当前类的详细信息</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+<tr>
+<td>[f]</td>
+<td>输出当前类的成员变量信息</td>
+</tr>
+<tr>
+<td>[x:]</td>
+<td>指定输出静态变量是属性的遍历深度。默认为0</td>
+</tr>
+</tbody>
+</table>
+<p>额外说明: 1）class-pattern 支持类的全限定名，支持com.x.x.x的形式，也支持从log直接拷贝过来com/x/x/x的形式。2）sc命令默认开启了子类匹配功能，也就是说子类也可以被搜索出来，如果想要关闭此参数，利用命令 <strong>option disable-sub-class false</strong></p>
+<p>使用示例:<br>我们修改一下StaticDemo 类，并编译和启动:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, String&gt; map  = <span class="keyword">new</span> HashMap&lt;String, String&gt;()&#123;&#123;put(<span class="string">"111"</span>,<span class="string">"111"</span>);&#125;&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> Integer value1 = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Integer value2 = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		ArrayList list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">		list.add(<span class="string">"aaa"</span>);</span><br><span class="line">		<span class="comment">//阻塞main方法</span></span><br><span class="line">		Object lock = <span class="keyword">new</span> Object();</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">synchronized</span> (lock)&#123;</span><br><span class="line">				<span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">					lock.wait();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.print(<span class="string">"进程退出"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们同样进入启动好的StaticDemo 进程，我们输入<strong>sc -df java.util.ArrayList</strong>，查看ArrayList类的详细信息和成员变量信息:<br><img src="0B17A15706A58760FE6E691516C782CF.jpg" alt="IMAGE"><br>我们可以看到类全名，是否为接口，是否为注解，是否为枚举类型，是什么访问权限，有哪一些属性，加载源头和使用的加载器是什么等等这些都可以一览无余，可以说是非常方便。</p>
+<h3 id="sm命令"><a href="#sm命令" class="headerlink" title="sm命令"></a>sm命令</h3><p>search-method 的缩写。能够搜索已经加载的类的所有方法信息。sm 命令只能看到当前类的声明方法，并不能看到父类的声明方法。<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式匹配</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法名表达式匹配</td>
+</tr>
+<tr>
+<td>[d]</td>
+<td>输出当前类的详细信息</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>输出<strong>sm  java.util.ArrayList</strong>, 查看ArrayList 所有的方法<br><img src="A57F37478F7A672B2932EAD056CC474B.jpg" alt="IMAGE"></p>
+<p>输入<strong>sm -d java.util.ArrayList add</strong>查看add 方法的详细信息:<br><img src="F89DB6BE7A1099DAC1BED862D875DB09.jpg" alt="IMAGE"></p>
+<h3 id="dump命令"><a href="#dump命令" class="headerlink" title="dump命令"></a>dump命令</h3><p>dump 命令可以将已经加载类的字节码放到特定目录。</p>
+<p>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式匹配</td>
+</tr>
+<tr>
+<td>[c:]</td>
+<td>类所属ClassLoader 的 hashCode</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>进入StaticDemo 进程输入<strong>dump -E java.util.HashMap</strong><br><img src="28A29E583CBD1A215D17D8239A9CD71E.jpg" alt="IMAGE"><br>如图所示，第一列信息是类所属ClassLoader 的hashCode，如果想单单输出一个类的字节吗，也可以用 <strong>-c</strong>指定。<br>第二列是加载器信息，第三列是字节码存储的地方。</p>
+<h3 id="jad命令"><a href="#jad命令" class="headerlink" title="jad命令"></a>jad命令</h3><p>jad 命令可以将JVM 时机运行的字节码反编译出来。反编译出来的源码可能字符集和语法可能存在错误，但是不影响阅读理解。</p>
+<p>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式匹配</td>
+</tr>
+<tr>
+<td>[c:]</td>
+<td>类所属ClassLoader 的 hashCode</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式匹配，默认为通配符匹配</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>进入StaticDemo 进程输入<strong>jad StaticDemo</strong><br><img src="70D21FD5EC9E6266D35DFEB64E71DD97.jpg" alt="IMAGE"><br>我们发现其实对比源码，还是有一些区别的，不过不影响阅读理解。<br>如果当加载的类过多的时候，我们还以利用-c 参数来指定哪个类的源码。官网还可以指定方法，但是我自己试了不行。</p>
+<h3 id="classloader-命令"><a href="#classloader-命令" class="headerlink" title="classloader 命令"></a>classloader 命令</h3><p>classloader 可以查看JVM中所有的classloader信息统计，并可以展示继承树和urls。</p>
+<p>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[l]</td>
+<td>按照类的加载实例进行统计</td>
+</tr>
+<tr>
+<td>[t]</td>
+<td>打印所有ClassLoader 的继承树</td>
+</tr>
+<tr>
+<td>[a]</td>
+<td>列出所有Classloader 加载的类。(谨慎使用)</td>
+</tr>
+<tr>
+<td>[c:]</td>
+<td>ClassLoader 的hashcode </td>
+</tr>
+<tr>
+<td>[c:r:]</td>
+<td>用ClassLoader 去找resource</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>进入StaticDemo 进程,输入<strong>classloader</strong><br>![IMAGE](A7DABAEB879663ADF47981334C2FEE04.jpg<br>第一列为加载器的名称，第二列为加载器实例个数，第三列为加载器的加载类的统计。</p>
+<p>输入<strong>classloader -l</strong>查看实例统计信息<br><img src="D9F56F15F675AFF0B91263668313ED84.jpg" alt="IMAGE"><br>第一列为加载器的名称，第二列为已经加载类的统计，第三列为加载器的hash值，第四列为加载器的父类加载器(双亲委派模型)</p>
+<p>输入<strong>classloader -t</strong> 查看类加载器的继承树<br><img src="F99E9C9216F30A2AF094D599EBFE8816.jpg" alt="IMAGE"></p>
+<p>其他用法大家可以自己去探讨一下。</p>
+<h3 id="redefine-命令"><a href="#redefine-命令" class="headerlink" title="redefine 命令"></a>redefine 命令</h3><p>加载外部的.class 文件，redefine jvm 已加载的类。(redefine可以直接修改线上的源码，功能非常强大，而且redefine 的类不能恢复，而且redefine有可能失败。所以要小心使用。)<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[c:]</td>
+<td>ClassLoader 的hashcode</td>
+</tr>
+<tr>
+<td>[p:]</td>
+<td>外部.class 的完整路径，支持多个路径</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedefineDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">			JayChowPerson jayChowPerson = JayChowPerson.getInstance();</span><br><span class="line">			jayChowPerson.sing();</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JayChowPerson</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String famousSong;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> JayChowPerson <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> JayChowPerson(<span class="string">"JayChow"</span> , <span class="string">"qing hua ci"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">JayChowPerson</span><span class="params">(String name , String famousSong)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">this</span>.famousSong = famousSong;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(name+<span class="string">" sing "</span> + famousSong);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们将这两个类编译，并启动RedefineDemo程序后。后台日志持续打印<br><img src="0FE931571080A5C75C13D1A1A8DE541F.jpg" alt="IMAGE"></p>
+<p>接下来假设因为需求原因，我们需要 原本属性song=qing hua ci 改为 song=yin di an lao ban jiu。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//new bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedefineDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JayChowPerson</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String famousSong;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> JayChowPerson <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> JayChowPerson(<span class="string">"JayChow"</span> , <span class="string">"yin di an lao ban jiu"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">JayChowPerson</span><span class="params">(String name , String famousSong)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">this</span>.famousSong = famousSong;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(name+<span class="string">" sing "</span> + famousSong);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>同样使用javac 编译后放在另外一个文件夹中，使用redefine 命令进行替换:<br><img src="B52E066F6286032B7E04F62ED7907452.jpg" alt="IMAGE"><br>替换后我们查看打印结果立马改变了:<br><img src="C5FB19C36C6AB5A8220C187F7C640DEB.jpg" alt="IMAGE"><br>当然我们也可以利用-c 参数指定加载器，这里就不在操作了。</p>
+<h2 id="监控跟踪命令相关"><a href="#监控跟踪命令相关" class="headerlink" title="监控跟踪命令相关"></a>监控跟踪命令相关</h2><p>现版本的监控和跟踪的命令包括:</p>
+<ul>
+<li>1 <strong>monitor方法</strong> -&gt; 方法执行监控</li>
+<li>2 <strong>watch方法</strong> -&gt;方法执行数据监测</li>
+<li>3 <strong>trace</strong> -&gt; 方法内部调用路径，并输出方法路径上的每个节点上的耗时。</li>
+<li>4 <strong>stack</strong> -&gt; 输出当前方法被调用的调用路径。</li>
+<li>5 <strong>tt</strong> -&gt; 方法执行数据的时空隧道。</li>
+</ul>
+<p>需要注意的是这些方法都是通过字节码增强技术实现的，在线上使用时，请明确需要观测的类，方法，以及条件。使用完成之后需要执行shutdown 或者 将增强过的类执行reset 命令。<br>我们重新写一下demo:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalculationDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">			List&lt;Integer&gt; arr1 = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">			arr1.add(<span class="number">1</span>);</span><br><span class="line">			arr1.add(<span class="number">9</span>);</span><br><span class="line">			execute(arr1);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(List&lt;Integer&gt; arr1)</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> basicValue = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr1.size(); i++)&#123;</span><br><span class="line">			basicValue += arr1.get(i);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">int</span> extendValue = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">		beforeAdd();</span><br><span class="line">		add(basicValue, extendValue);</span><br><span class="line">		afterAdd();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">(Integer value1 , Integer value2)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"adding"</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> BigDecimal(value1).add(<span class="keyword">new</span> BigDecimal(value2)).intValue();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">beforeAdd</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"before add"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">afterAdd</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"after add"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="monitor-命令"><a href="#monitor-命令" class="headerlink" title="monitor 命令"></a>monitor 命令</h3><p>monitor 命令非实时命令，直白一点来说就是当方法被调用的时候，才会监控到方法的一些信息。<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法表达式</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式</td>
+</tr>
+<tr>
+<td>[c:]</td>
+<td>统计周期，默认为120秒(默认要等两分钟才打印，第一次以为没有打印)</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>我们输入 <strong>monitor -c 10 CalculationDemo execute </strong><br><img src="A4D6868E119D2DDEF80B551835E39EE4.jpg" alt="IMAGE"><br>我们可以从监控屏看到方法在周期时间内的调用总次数，成功次数，失败次数，平均花费的时间和失败率。</p>
+<h3 id="watch-命令"><a href="#watch-命令" class="headerlink" title="watch 命令"></a>watch 命令</h3><p>watch 可以方便的查看方法的参数，返回值等信息。</p>
+<p>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法表达式</td>
+</tr>
+<tr>
+<td>express</td>
+<td>观察表达式</td>
+</tr>
+<tr>
+<td>condition-express</td>
+<td>条件表达式</td>
+</tr>
+<tr>
+<td>[b]</td>
+<td>在方法开始前观察</td>
+</tr>
+<tr>
+<td>[e]</td>
+<td>在方法异常后观察</td>
+</tr>
+<tr>
+<td>[s]</td>
+<td>在方法返回后观察</td>
+</tr>
+<tr>
+<td>[f]</td>
+<td>在方法结束后观察(默认)</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式</td>
+</tr>
+<tr>
+<td>[x:]</td>
+<td>对输出结果进行遍历的深度，默认为1</td>
+</tr>
+</tbody>
+</table>
+<p>特别说明: <strong>express</strong> 只有是符合ognl 表达式的基本都能被正常支持，我们可以使用 <strong>“{params, returnObj}”</strong> 来观察方法的参数和返回结果。 这里要注意的是params 在使用 -b 参数的时候，观察到的值是<strong>方法入参</strong>，此时异常和返回值均不存在，而 -e -s -f 观察到的值是<strong>方法出参</strong>。</p>
+<p>使用示例:<br>我们同样进入CalculationDemo 进程，输入 <strong>watch CalculationDemo add “{params, returnObj}” -b -x 2</strong><br><img src="EA62E7EDEB06A061A0434CF39C589FF7.jpg" alt="IMAGE"><br>我们可以看见方法入参为两个Integer值，返回值为null (因为参数为-b)</p>
+<p>输入 <strong>watch CalculationDemo add “{params, returnObj}” -s -x 2</strong>,我们可以观察方法出参和返回值<br><img src="87EAF8FC89BB45702954A2A61318375A.jpg" alt="IMAGE"></p>
+<p>那我们怎么使用条件表达式呢?我们输入<strong> watch CalculationDemo add “{params, returnObj}” -x 2 -s params[0]==10</strong><br><img src="BA7E4122D66E72716E23D2F9BFEA8DF6.jpg" alt="IMAGE"><br>这个条件表达式的意思是，只有当第一个参数的值满足等于10的时候，此命令才会有响应。<br>如果我们在此程序将条件修改为 params[0] == 2，我们会发现由于条件不成立，则会没有打印。</p>
+<p>有时候我们需要过滤导致异常的参数信息，我们可以利用 -e 参数: <strong>watch CalculationDemo verify “{params, throwExp}” -e -x 2</strong><br><img src="F06A4A61F57D9DDC6E3B5FDD8489A95C.jpg" alt="IMAGE"></p>
+<h3 id="trace-命令"><a href="#trace-命令" class="headerlink" title="trace 命令"></a>trace 命令</h3><p>trace 命令可以统计整个调用链路的性能开销和链路追踪。trace 在执行的过程中自身会有一定的开销，这个统计有点类似JProfile的功能，但是JProfile 会减去自身执行的开销时间，相对来说会比较准确，而且方法越多，trace 可能偏差越大。虽然有偏差，但是还是能看出不少问题的。<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法表达式</td>
+</tr>
+<tr>
+<td>condition-express</td>
+<td>条件表达式</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式</td>
+</tr>
+<tr>
+<td>[n:]</td>
+<td>命令执行次数</td>
+</tr>
+<tr>
+<td>#cost</td>
+<td>方法执行耗时(单位毫秒)</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>进入CalculationDemo 进程后，输入<strong>trace CalculationDemo execute</strong><br><img src="D521BBD0D18E3E43DF085E307D66392F.jpg" alt="IMAGE"><br>[3.8..ms]为execute 方法的执行时间<br>[min=0.008697ms,max=0.652564ms,total=0.661261ms,count=2] 对相同方法的调用进行了合并。<br>[throws Exception]表面这个方法有抛出异常。</p>
+<p>我们也可以像watch 命令一样利用condition-express(条件表达式) 和 #cost(消耗时间) 进行过滤，用法跟watch一样。<br>我们这里利用消耗时间来过滤: <strong>trace CalculationDemo execute #cost&gt;0.7</strong><br><img src="41D45530CA1C70B5142A70E0182C9CDA.jpg" alt="IMAGE"></p>
+<h3 id="stack-命令"><a href="#stack-命令" class="headerlink" title="stack 命令"></a>stack 命令</h3><p>很多时候我们知道一个方法被执行了，但是调用这个方法的执行路径特别多，导致根本不知道是从哪里被调用了。这时候stack命令就显得特别有用。<br>写一个简单的例子:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StackDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++)&#123;</span><br><span class="line">				<span class="keyword">if</span>(i % <span class="number">2</span> == <span class="number">0</span>)&#123;</span><br><span class="line">					evenNumber(i);</span><br><span class="line">				&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">					oddNumber(i);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">oddNumber</span><span class="params">(<span class="keyword">int</span> number)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"We accept odd number:"</span>+number);</span><br><span class="line">		<span class="comment">//do something</span></span><br><span class="line">		sleepByNumber(number);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">evenNumber</span><span class="params">(<span class="keyword">int</span> number)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"We accept evenNumber:"</span>+number);</span><br><span class="line">		<span class="comment">//do something</span></span><br><span class="line">		sleepByNumber(number);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sleepByNumber</span><span class="params">(<span class="keyword">int</span> number)</span></span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(number*<span class="number">1000</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法表达式</td>
+</tr>
+<tr>
+<td>condition-express</td>
+<td>条件表达式</td>
+</tr>
+<tr>
+<td>[E]</td>
+<td>开启正则表达式</td>
+</tr>
+<tr>
+<td>[n:]</td>
+<td>命令执行次数</td>
+</tr>
+<tr>
+<td>[s:]</td>
+<td>检索参数</td>
+</tr>
+<tr>
+<td>[i]</td>
+<td>查看调用信息</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:</p>
+<p>同样编译和运行StackDemo，进入进程后，我们输入命令:<strong>stack StackDemo sleepByNumber ‘params[0]==3</strong><br><img src="B514CC17C7F0B0007ECCDCF14688EC0E.jpg" alt="IMAGE"></p>
+<p>我们打印打印number为单数，且执行时间大于5的执行链路<br><img src="DB55BE28441653B393C494C82478DA54.jpg" alt="IMAGE"></p>
+<h3 id="tt命令"><a href="#tt命令" class="headerlink" title="tt命令"></a>tt命令</h3><p>tt 命令是TimeTunnel 的缩写。可以记录指定方法每次的调用入参和返回信息。并且能对这些调用进行对比和观察。<br>我们还是进入StackDemo， 观察sleepByNumber 的调用<br>参数说明:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class-pattern</td>
+<td>类名表达式</td>
+</tr>
+<tr>
+<td>method-pattern</td>
+<td>方法表达式</td>
+</tr>
+<tr>
+<td>condition-express</td>
+<td>条件表达式</td>
+</tr>
+<tr>
+<td>[t]</td>
+<td>主参数，表面希望记录下类的每次执行情况。</td>
+</tr>
+<tr>
+<td>[n]</td>
+<td>表示记录的次数</td>
+</tr>
+<tr>
+<td>[p]</td>
+<td>重新执行调用</td>
+</tr>
+</tbody>
+</table>
+<p>使用示例:<br>进入StackDemo 输入:<strong> tt -t -n 30 StackDemo  sleepByNumber</strong><br><img src="2BFBB868C2B36D350008395060A97413.jpg" alt="IMAGE"><br>字段说明:</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INDEX</td>
+<td>索引号，每一次调用对应着一个索引。如果想查看针对某一次调用的信息必须基于此索引编号</td>
+</tr>
+<tr>
+<td>TIMESTAMP</td>
+<td>方法执行的时候，本地的时间</td>
+</tr>
+<tr>
+<td>COST</td>
+<td>方法执行的耗时</td>
+</tr>
+<tr>
+<td>IS-RET</td>
+<td>方法是否以正常返回的形式结束</td>
+</tr>
+<tr>
+<td>IS-EXP</td>
+<td>方法是否以抛异常的形式结束</td>
+</tr>
+<tr>
+<td>OBJECT</td>
+<td>执行对象的hashCode ，但跟JVM 的hashcode 并不是同一个东西</td>
+</tr>
+<tr>
+<td>CLASS</td>
+<td>执行的类名</td>
+</tr>
+<tr>
+<td>METHOD</td>
+<td>执行的方法名</td>
+</tr>
+</tbody>
+</table>
+<p>我们用上面的tt命令记录一大片时间段之后，可以利用条件从中筛选出自己想要看到的记录。<br>首先我们输入命令 <strong>tt -l</strong>，查看所有记录<br><img src="469B1C895DD3A15D4FF6930D3979AB57.jpg" alt="IMAGE"></p>
+<p>然后我们利用 -s 参数进行检索:<strong>tt -s params[0]==5</strong><br><img src="D306904DB8030BB7192D09F0ACA19D01.jpg" alt="IMAGE"></p>
+<p>我们也可以利用-i参数对某一次调用进行查看:<strong>tt -i 1001</strong>，这个1001就是记录信息里面的INDEX的值。<br><img src="32730C0F36AC8FF825EFCD030507DE67.jpg" alt="IMAGE"></p>
+<p>重做一次调用:有时候我们想要重现其中一次调用，我们可以直接用tt命令 加上-p 参数即可，再也不用前端人员点击按钮出发多一次啦。<br>1.我们输入 <strong>tt -t StaticDemo oddNumber -n 3</strong> 记录三次调用<br>2.然后我们使用 <strong>tt -i 1031 -p</strong> 触发再一次执行方法。<br><img src="CF28E3A5ED74FAC25601856B17ED20B2.jpg" alt="IMAGE"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这篇文章主要介绍了Arthas 类加载相关命令，以及方法监控与跟踪相关命令。特别是方法监控与跟踪在解决线上问题起到非常好的作用，但是有些命令过于强大也要谨慎使用，例如可以让JVM 动态重新加载class 文件的redefine 命令。至此我们对Arthas 3.0版本的命令都有了大致的了解，这的确是一款很不错的线上诊断工具，希望下个版本能解决现有的小不足，增加一些更让我们惊叹的功能。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/工具/" rel="tag"># 工具</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/19/Java线上诊断神器Arthas-1/" rel="next" title="Java线上诊断神器Arthas-1">
+                <i class="fa fa-chevron-left"></i> Java线上诊断神器Arthas-1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/20/Spring-Cloud-Config-构建基于Git-的分布式配置中心/" rel="prev" title="Spring Cloud Config  构建基于Git 的分布式配置中心">
+                Spring Cloud Config  构建基于Git 的分布式配置中心 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载相关命令"><span class="nav-number">1.</span> <span class="nav-text">类加载相关命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sc命令"><span class="nav-number">1.1.</span> <span class="nav-text">sc命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sm命令"><span class="nav-number">1.2.</span> <span class="nav-text">sm命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dump命令"><span class="nav-number">1.3.</span> <span class="nav-text">dump命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jad命令"><span class="nav-number">1.4.</span> <span class="nav-text">jad命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#classloader-命令"><span class="nav-number">1.5.</span> <span class="nav-text">classloader 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redefine-命令"><span class="nav-number">1.6.</span> <span class="nav-text">redefine 命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监控跟踪命令相关"><span class="nav-number">2.</span> <span class="nav-text">监控跟踪命令相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#monitor-命令"><span class="nav-number">2.1.</span> <span class="nav-text">monitor 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#watch-命令"><span class="nav-number">2.2.</span> <span class="nav-text">watch 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-命令"><span class="nav-number">2.3.</span> <span class="nav-text">trace 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stack-命令"><span class="nav-number">2.4.</span> <span class="nav-text">stack 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tt命令"><span class="nav-number">2.5.</span> <span class="nav-text">tt命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>

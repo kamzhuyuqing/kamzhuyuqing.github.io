@@ -80,18 +80,27 @@
 
 
 
-<meta name="description" content="概述上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。 hadoop shell ls  查看:hadoop fs -ls {hdfs_path}ex:输入hadoop fs -ls / 查看根目录: &amp;lt;img style=’">
+<meta name="description" content="概述上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。 hadoop shell ls  查看:hadoop fs -ls {hdfs_path}ex:输入hadoop fs -ls / 查看根目录:   mkdir 创建文件夹:h">
 <meta name="keywords" content="hadoop,shell,大数据">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hadoop shell命令">
 <meta property="og:url" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/index.html">
 <meta property="og:site_name" content="Kam Blog">
-<meta property="og:description" content="概述上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。 hadoop shell ls  查看:hadoop fs -ls {hdfs_path}ex:输入hadoop fs -ls / 查看根目录: &amp;lt;img style=’">
+<meta property="og:description" content="概述上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。 hadoop shell ls  查看:hadoop fs -ls {hdfs_path}ex:输入hadoop fs -ls / 查看根目录:   mkdir 创建文件夹:h">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-19T13:14:25.332Z">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/1.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/3.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/4.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/5.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/6.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/7.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/8.png">
+<meta property="og:updated_time" content="2019-01-03T08:19:54.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop shell命令">
-<meta name="twitter:description" content="概述上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。 hadoop shell ls  查看:hadoop fs -ls {hdfs_path}ex:输入hadoop fs -ls / 查看根目录: &amp;lt;img style=’">
+<meta name="twitter:description" content="概述上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。 hadoop shell ls  查看:hadoop fs -ls {hdfs_path}ex:输入hadoop fs -ls / 查看根目录:   mkdir 创建文件夹:h">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2017/11/30/Hadoop-shell命令/1.png">
 
 
 
@@ -356,22 +365,17 @@
         <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>上一篇文章我们搭建好hadoop 之后，我们可以来尝试一些hadoop 的shell 命令。其实 hadoop 的shell跟linux 的shell 有很多相似的，只要是熟悉linux 的shell，学起来会很轻松。</p>
 <h3 id="hadoop-shell"><a href="#hadoop-shell" class="headerlink" title="hadoop shell"></a>hadoop shell</h3><ul>
 <li><p><strong>ls</strong>  查看:hadoop fs -ls {hdfs_path}<br>ex:输入<code>hadoop fs -ls /</code> 查看根目录:</p>
-<div>&lt;img style=’float:left’src=”Hadoop-shell命令/1.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+<div align="left"><img src="1.png" alt="IMAGE"></div>
 </li>
-<li><p><strong>mkdir</strong> 创建文件夹:hadoop fs -mkdir {hdfs_path}<br>ex: 输入<code>hadoop fs -mkdir /test1</code> 创建test1 目录</p>
-<div>&lt;img style=’float:left’src=”Hadoop-shell命令/2.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+<li><p><strong>mkdir</strong> 创建文件夹:hadoop fs -mkdir {hdfs_path}<br>ex: 输入<code>hadoop fs -mkdir /test1</code> 创建test1 目录<br><img src="2.png" alt="IMAGE"></p>
 </li>
-<li><p><strong>rm</strong> 删除文件和文件夹: hadoop fs -rm {-arg} {hdfs_file_path}<br>ex: 输入<code>hadoop fs -rm -r /test1</code></p>
-<div>&lt;img style=’float:left’src=”Hadoop-shell命令/3.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+<li><p><strong>rm</strong> 删除文件和文件夹: hadoop fs -rm {-arg} {hdfs_file_path}<br>ex: 输入<code>hadoop fs -rm -r /test1</code><br><img src="3.png" alt="IMAGE"></p>
 </li>
-<li><p><strong>put</strong> 将本地文件上传到hdfs 中: hadoop fs -put {local_file} {hdfs_path}<br>ex : 在当前目录创建test.txt 并输入 <code>hadoop fs -put ./test.txt /test</code> 上传到test目录中。</p>
-<div>&lt;img style=’float:left’src=”Hadoop-shell命令/4.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div><br><div>&lt;img style=’float:left’src=”Hadoop-shell命令/5.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+<li><p><strong>put</strong> 将本地文件上传到hdfs 中: hadoop fs -put {local_file} {hdfs_path}<br>ex : 在当前目录创建test.txt 并输入 <code>hadoop fs -put ./test.txt /test</code> 上传到test目录中。<br><img src="4.png" alt="IMAGE"><br><img src="5.png" alt="IMAGE"></p>
 </li>
-<li><p><strong>get</strong> 将hdfs 的文件下载到本地: hadoop fs -get {hdfs_file_path} {local_file_path}<br>ex ：输入 <code>hadoop fs -get /test/test.txt  ./text2.txt</code> 将text.txt 下载并保持到本地为test2.txt</p>
- <div>&lt;img style=’float:left’src=”Hadoop-shell命令/6.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div><br><div>&lt;img style=’float:left’src=”Hadoop-shell命令/7.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+<li><p><strong>get</strong> 将hdfs 的文件下载到本地: hadoop fs -get {hdfs_file_path} {local_file_path}<br>ex ：输入 <code>hadoop fs -get /test/test.txt  ./text2.txt</code> 将text.txt 下载并保持到本地为test2.txt<br><img src="6.png" alt="IMAGE"><br><img src="7.png" alt="IMAGE"></p>
 </li>
-<li><p><strong>cat</strong> 展示hdfs 文件内容: hadoop fs -cat {hdfs_file_path}<br>ex : 输入 <code>hadoop fs cat /test/test.txt</code> 查看test.txt 内容</p>
- <div>&lt;img style=’float:left’src=”Hadoop-shell命令/6.png”/&gt;</div><br><div style="clear:both;height:0px"><br></div>
+<li><p><strong>cat</strong> 展示hdfs 文件内容: hadoop fs -cat {hdfs_file_path}<br>ex : 输入 <code>hadoop fs cat /test/test.txt</code> 查看test.txt 内容<br> <img src="8.png" alt="IMAGE"></p>
 </li>
 <li></li>
 </ul>
@@ -600,7 +604,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

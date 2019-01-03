@@ -88,10 +88,12 @@
 <meta property="og:site_name" content="Kam Blog">
 <meta property="og:description" content="ThreadLocal 介绍 java.lang.ThreadLocal 是Java提供用来保存线程变量的机制,是对象为键，任意类型为值的存储结构。那么何为线程变量呢，当你使用ThreadLocalset函数将一个值与这个线程绑定的时候，在当前线程下使用get方法可以获取到之前绑定的值。其他线程的set操作也只对其他当前线程‘有效’。 ThreadLocal 使用 与synchronized等诸多">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-19T13:14:25.333Z">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2018/04/26/Java-并发编程-ThreadLocal的使用/1.jpg">
+<meta property="og:updated_time" content="2019-01-03T08:30:01.560Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程之ThreadLocal的使用">
 <meta name="twitter:description" content="ThreadLocal 介绍 java.lang.ThreadLocal 是Java提供用来保存线程变量的机制,是对象为键，任意类型为值的存储结构。那么何为线程变量呢，当你使用ThreadLocalset函数将一个值与这个线程绑定的时候，在当前线程下使用get方法可以获取到之前绑定的值。其他线程的set操作也只对其他当前线程‘有效’。 ThreadLocal 使用 与synchronized等诸多">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2018/04/26/Java-并发编程-ThreadLocal的使用/1.jpg">
 
 
 
@@ -362,7 +364,7 @@
 <h2 id="ThreadLocal-的原理。"><a href="#ThreadLocal-的原理。" class="headerlink" title="ThreadLocal 的原理。"></a>ThreadLocal 的原理。</h2><p>ThreadLocal 究竟是怎么实现这种线程变量机制的呢，其实关键在于ThreadLocal的存储:<strong>ThreadLocalMap</strong>。相信有翻过源码的朋友都可以看见，ThreadLocal内部实现了静态类 <strong>ThreadLocalMap</strong>。而ThreadLocalMap 的存储结构Entry继承了弱引用类 <strong>WeakReference</strong> ,同时Entry的 Object 类型的<strong>value</strong>存储的真正的值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalMap</span></span>&#123;</span><br><span class="line">  <span class="comment">//继承了弱引用类</span></span><br><span class="line">  <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span> <span class="keyword">extends</span> <span class="title">WeakReference</span>&lt;<span class="title">ThreadLocal</span>&lt;?&gt;&gt; </span>&#123;</span><br><span class="line">            <span class="comment">/** The value associated with this ThreadLocal. */</span></span><br><span class="line">            Object value;</span><br><span class="line">            Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;</span><br><span class="line">                <span class="keyword">super</span>(k);</span><br><span class="line">                value = v;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>而每个Thread 都有一个ThreadLocalMap 对象。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Thread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">   ThreadLocal.ThreadLocalMap threadLocals = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>现在大家明白了吧。当set一个值得时候，其实就是获取当前线程的ThreadLocalMap 引用，然后赋值。当然get操作也是如此。</p>
-<div>&lt;img style=’float:left’src=”1.jpg”/&gt;</div><br><div style="clear:both;height:0px"></div>
+<div><img style="float:left" src="1.jpg"></div><br><div style="clear:both;height:0px"></div>
 
 
 <h2 id="ThreadLocal-存在的问题"><a href="#ThreadLocal-存在的问题" class="headerlink" title="ThreadLocal 存在的问题"></a>ThreadLocal 存在的问题</h2><p>因为Entry 是继承弱引用类型，而弱引用类型会在GC的时候递归引用进行回收。而如果线程在使用完之后不可达。Entry 的弱引用key将被回收，而value因为是强引用类型所以会导致很多 key为 null的value，没办法访问这些key为null的ThrealLocal。虽然，ThreadLocal在每次进行get,set,remove方法的时候会进行nullkey的清除，但这还是无法避免内存泄漏的根本问题。所以在此提供良好使用ThreadLocal的两条建议。<br>1)尽量将ThreadLocal 声明为static.延迟生命周期。<br>2)每次在线程使用完之后，进行remove操作。</p>

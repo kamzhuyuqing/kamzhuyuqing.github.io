@@ -69,7 +69,7 @@
 
 
 
-  <meta name="keywords" content="java,JVM,">
+  <meta name="keywords" content="Hexo, NexT">
 
 
 
@@ -80,20 +80,18 @@
 
 
 
-<meta name="description" content="运行时数据区域概要图   1)程序计数器（Program Counter Register）：是一块较小的内存空间，是当前线程所执行的字节码的行号指示器。字节码解释器就是通过改变程序计数器的值来实现程序的分支，跳转，循环，异常处理，线程恢复等功能。多线程的实现是通过处理器的不断切换切割处理时间来实现的，每个线程都有自己的程序计数器，所以程序计数器是线程独立的。如果正在执行的程序是一个java方法，">
-<meta name="keywords" content="java,JVM">
+<meta name="description" content="闻道无先后，术业有专攻。">
+<meta name="keywords" content="朱育青,Java,高并发,Python,Kam,大数据,技术博客,技术,github">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java内存区域">
-<meta property="og:url" content="http://kamzhuyuqing.github.io/2017/11/01/Java内存区域/index.html">
+<meta property="og:title" content="Java对象头与锁的升级">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2019/02/27/Java对象头与锁的升级/index.html">
 <meta property="og:site_name" content="Kam Blog">
-<meta property="og:description" content="运行时数据区域概要图   1)程序计数器（Program Counter Register）：是一块较小的内存空间，是当前线程所执行的字节码的行号指示器。字节码解释器就是通过改变程序计数器的值来实现程序的分支，跳转，循环，异常处理，线程恢复等功能。多线程的实现是通过处理器的不断切换切割处理时间来实现的，每个线程都有自己的程序计数器，所以程序计数器是线程独立的。如果正在执行的程序是一个java方法，">
+<meta property="og:description" content="闻道无先后，术业有专攻。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2017/11/01/Java内存区域/1.png">
-<meta property="og:updated_time" content="2019-01-03T08:32:39.743Z">
+<meta property="og:updated_time" content="2019-02-27T07:39:50.492Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java内存区域">
-<meta name="twitter:description" content="运行时数据区域概要图   1)程序计数器（Program Counter Register）：是一块较小的内存空间，是当前线程所执行的字节码的行号指示器。字节码解释器就是通过改变程序计数器的值来实现程序的分支，跳转，循环，异常处理，线程恢复等功能。多线程的实现是通过处理器的不断切换切割处理时间来实现的，每个线程都有自己的程序计数器，所以程序计数器是线程独立的。如果正在执行的程序是一个java方法，">
-<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2017/11/01/Java内存区域/1.png">
+<meta name="twitter:title" content="Java对象头与锁的升级">
+<meta name="twitter:description" content="闻道无先后，术业有专攻。">
 
 
 
@@ -123,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://kamzhuyuqing.github.io/2017/11/01/Java内存区域/">
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2019/02/27/Java对象头与锁的升级/">
 
 
 
 
 
-  <title>Java内存区域 | Kam Blog</title>
+  <title>Java对象头与锁的升级 | Kam Blog</title>
   
 
 
@@ -266,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2017/11/01/Java内存区域/">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2019/02/27/Java对象头与锁的升级/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Kam">
@@ -283,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Java内存区域</h1>
+          <h1 class="post-title" itemprop="name headline">Java对象头与锁的升级</h1>
         
 
         <div class="post-meta">
@@ -295,8 +293,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-01T21:05:50+08:00">
-                2017-11-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-27T15:39:50+08:00">
+                2019-02-27
               </time>
             
 
@@ -305,28 +303,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -355,25 +331,7 @@
       
 
       
-        <h2 id="运行时数据区域概要图"><a href="#运行时数据区域概要图" class="headerlink" title="运行时数据区域概要图"></a>运行时数据区域概要图</h2><div><br><img style="float:left" src="1.png"><br></div><br><div style="clear:both"><br></div>
-
-<ul>
-<li><p>1)程序计数器（Program Counter Register）：是一块较小的内存空间，是当前线程所执行的字节码的行号指示器。字节码解释器就是通过改变程序计数器的值来实现程序的分支，跳转，循环，异常处理，线程恢复等功能。多线程的实现是通过处理器的不断切换切割处理时间来实现的，每个线程都有自己的程序计数器，所以程序计数器是线程独立的。如果正在执行的程序是一个java方法，那么程序计数器的值是字节码指令的地址，如果是native方法，则程序计数器则是undefined。</p>
-</li>
-<li><p>2)Java 虚拟机栈 （JAVA Virtual Machine Stacks）:Java 虚拟机栈描述的是Java 方法的运行内存模型。Java方法在运行的时候，都会创建一个栈帧，用来存储局部变量，操作数栈以及方法出口等等信息。局部变量所需要的内存大小在编译期间已经确认，当线程进入一个方法的时候，局部变量的大小是不会改变的。此存储空间会有两种异常1.当线程请求的内存大于虚拟机所允许的深度时——&gt;StackOverFlow。2.虚拟机可以动态扩展，当动态扩展无法申请到内存的时候——&gt;OutOfMemoryError</p>
-</li>
-<li><p>3)本地方法栈： 跟JAVA虚拟机栈差不多，本地方法栈为Native方法服务。同样有StackOverFlow 和 OutOfMemoryError两种异常</p>
-</li>
-<li><p>4)Java堆: 是一块线程共享的存储区域，几乎所有的java对象都在这边存储，因此是垃圾收集器的主要管理区域，因此成为GC 堆(Garbage collection Heap)。至于收集算法有的分为新生代和老年代。从存储分配的角度来看，可能划分为多个线程私有的分配缓冲区（TLAB）。Java堆可以通过Xmx- 和 Xms-来进行扩展，若是没有足够的内存进行扩展，则抛出OutOfMemoryError。</p>
-</li>
-<li><p>5)方法区: 跟Java堆一样，方法区是一块线程共享的存储区域。其存放的是类信息，常量(final)，静态变量（static），即时编译后的代码信息。特例:HotSpot用永久代的方法实现了方法区的内存回收。Java可以用参数-XX： MaxPermSize  扩展此区域，若是无法申请内存，一样抛出OutOfMemoryError异常。</p>
-</li>
-<li><p>6)运行时常量区: 运行时常量区是方法区的一部分，用于代码编译时期产生的类描述，符号引用以及直接引用。</p>
-</li>
-<li><p>7)直接内存(Direct Memory)： 直接内存又称为堆外内存，与堆的大小无关。在分配内存的速度上有优势，但是创建和销毁对象成本很高。</p>
-</li>
-</ul>
-
+        
       
     </div>
     
@@ -412,14 +370,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/java/" rel="tag"># java</a>
-          
-            <a href="/tags/JVM/" rel="tag"># JVM</a>
-          
-        </div>
-      
 
       
       
@@ -429,8 +379,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/31/linux下创建新用户/" rel="next" title="linux下创建新用户">
-                <i class="fa fa-chevron-left"></i> linux下创建新用户
+              <a href="/2018/12/20/Spring-Cloud-Config-构建基于Git-的分布式配置中心/" rel="next" title="Spring Cloud Config  构建基于Git 的分布式配置中心">
+                <i class="fa fa-chevron-left"></i> Spring Cloud Config  构建基于Git 的分布式配置中心
               </a>
             
           </div>
@@ -438,10 +388,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/01/linux下载命令-wget/" rel="prev" title="linux下载命令--wget">
-                linux下载命令--wget <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -493,17 +439,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -565,22 +502,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时数据区域概要图"><span class="nav-number">1.</span> <span class="nav-text">运行时数据区域概要图</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

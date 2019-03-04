@@ -306,6 +306,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -335,8 +357,15 @@
       
         
           
-          
-          
+          概述这篇文章主要用来总结一下Java对象头的Mark Word 与Java 锁升级的过程。(我们这里用32bit 的虚拟机为例)
+Java 对象头Java 对象包含三个部分
+
+1 Java 对象头
+2 元数据(包括类的属性名等)
+3 字节填充(对象的大小必须是8bit 的倍数)
+
+Mark Word
+          ...
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/02/27/Java对象头与锁的升级/#more" rel="contents">

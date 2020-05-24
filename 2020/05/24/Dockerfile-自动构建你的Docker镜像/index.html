@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,容器,docker,springboot,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Docker 应用概述根据官方的定义,Docker 是以Docker容器为资源分割和调度的基本单位，封装了软件运行时所需的所有运行环境，为开发者和系统管理员设计的，用于构建，发布和运维分布式的平台。它是一个跨平台，可移植并且易用的容器解决方案。Docker采用Go语言编写，并遵从Apache 2.0 协议。Docker可在容器内快速自动化地部署应用，并且通过Linux系统的操作内核技术(names">
+<meta name="keywords" content="java,容器,docker,springboot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dockerfile 自动构建你的Docker镜像">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2020/05/24/Dockerfile-自动构建你的Docker镜像/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="Docker 应用概述根据官方的定义,Docker 是以Docker容器为资源分割和调度的基本单位，封装了软件运行时所需的所有运行环境，为开发者和系统管理员设计的，用于构建，发布和运维分布式的平台。它是一个跨平台，可移植并且易用的容器解决方案。Docker采用Go语言编写，并遵从Apache 2.0 协议。Docker可在容器内快速自动化地部署应用，并且通过Linux系统的操作内核技术(names">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/05/24/Dockerfile-自动构建你的Docker镜像/1.jpg">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/05/24/Dockerfile-自动构建你的Docker镜像/2.jpg">
+<meta property="og:updated_time" content="2020-05-24T02:53:25.834Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dockerfile 自动构建你的Docker镜像">
+<meta name="twitter:description" content="Docker 应用概述根据官方的定义,Docker 是以Docker容器为资源分割和调度的基本单位，封装了软件运行时所需的所有运行环境，为开发者和系统管理员设计的，用于构建，发布和运维分布式的平台。它是一个跨平台，可移植并且易用的容器解决方案。Docker采用Go语言编写，并遵从Apache 2.0 协议。Docker可在容器内快速自动化地部署应用，并且通过Linux系统的操作内核技术(names">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2020/05/24/Dockerfile-自动构建你的Docker镜像/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2020/05/24/Dockerfile-自动构建你的Docker镜像/">
+
+
+
+
+
+  <title>Dockerfile 自动构建你的Docker镜像 | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2020/05/24/Dockerfile-自动构建你的Docker镜像/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Dockerfile 自动构建你的Docker镜像</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-24T10:09:30+08:00">
+                2020-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index">
+                    <span itemprop="name">docker</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Docker-应用概述"><a href="#Docker-应用概述" class="headerlink" title="Docker 应用概述"></a>Docker 应用概述</h2><p>根据官方的定义,Docker 是以Docker容器为资源分割和调度的基本单位，封装了软件运行时所需的所有运行环境，为开发者和系统管理员设计的，用于构建，发布和运维分布式的平台。它是一个跨平台，可移植并且易用的容器解决方案。Docker采用Go语言编写，并遵从Apache 2.0 协议。Docker可在容器内快速自动化地部署应用，并且通过Linux系统的操作内核技术(namespace, cgroup)实现资源隔离与安全保障。</p>
+<p>下图是Docker的命令结构图:<br><img src="1.jpg" alt="IMAGE"></p>
+<p>其中我们可以看到命令主要围绕的是镜像(Images), 容器(Containers)展开。其中包括:</p>
+<ul>
+<li>1 从Docker Registry 拉取(pull)镜像到本地，或者将制作好的镜像上传(push)到远程库。</li>
+<li>2 Images 通过run 命令启动并生成Containers 实例，而如果修改后的Containers如果需要保存，则可以通过commit命令生成新的镜像(注意: commit命令一般不用于新镜像的制作，新镜像的制作一般由<strong>Dokcerfile</strong> 进行制作.)</li>
+<li>3 Containers 可以进行启动(start), 停止(stop), 重启(restart)容器进程等操作。</li>
+<li>4 Images 可以通过save命令进行备份,相应的，可以通过load命令将备份好的文件加载成为镜像。</li>
+<li>5 当然除了以上命令，还有<strong>docker info</strong>, <strong>docker images</strong>, <strong>docker inspect</strong>, <strong>docker exec</strong> 等其他常用命令，许多文档都有相应介绍，由于篇幅问题不在详述。</li>
+</ul>
+<p>下面我们主要来说说我们今天的主人公: 利用Dockerfile 快速自动地构建你想要的镜像。</p>
+<h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><p>Dockerfile 是docker用于构建镜像的文本文件，它描述了组装镜像的步骤。<br>Dockerfile 的指令都是单独执行的。除了<strong>FROM</strong> 指令以外，每一条指令的执行都是在其上一条指令所生成镜像的基础上执行，每一条指令都会基于原来的镜像生成一个新的镜像层。Dockerfile所生成的最终镜像就是在基础镜像叠加一层一层的镜像所组建的。为了提高构建镜像的速度，Docker daemon会缓存构建中的中间镜像，当一个镜像从基础镜像开始构建时，会将Dockerfile的下一条构建命令与基础镜像的所有子镜像作比较，如果有一个子镜像是由相同的指令生成的，则会命中缓存，直接使用该子镜像，而不会在生成一个中间镜像。比较特殊的是 <strong>COPY</strong>指令和<strong>ADD</strong>这两个拷贝指令还会比较拷贝的文件夹内容是否相同，如果只是命令相同，但是文件夹内容不相同，则不会使用缓存镜像，从而生成另外一个新的中间镜像。</p>
+<p>我们先来看看<strong>Dockerfile</strong> 都有哪些指令可以使用:</p>
+<ul>
+<li><p>1 <strong>FROM</strong> 格式FROM &lt;image> 或者 FROM &lt;image> &lt;tag><br>FROM 指令作为Dockerfile 的第一条构建指令，其功能是为后面的指令提供基础镜像，基础镜像可以选择任何有效的镜像。Dockerfile 中可以有多个FROM 指令，对应的也会构建多个镜像(多阶段构建的应用)。参数tag 如果为空，则默认是latest，如果指定的tag镜像不存在，则直接返回错误。</p>
+</li>
+<li><p>2 <strong>ENV</strong>  格式ENV &lt;key> &lt;value> 或者 ENV &lt;key>=&lt;value><br>ENV 指令的作用是为镜像声明环境变量。ENV 所声明的环境变量可以供后面的指令使用(如COPY, ADD, WORKDIR等),使用格式为${var}, $var。</p>
+</li>
+<li><p>3 <strong>WORKDIR</strong> 格式WORKDIR &lt;path><br>WORKDIR 是为镜像设置当前工作目录。Dockerfile 与linux shell 有很多相同之处，必须提到的一点是，如果单纯将Dockerfile 当成linux shell 来写，可能会犯很多错误，举个例子:</p>
+  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span> cd /app</span><br><span class="line">RUN echo "hello world" &gt; helloworld.txt</span><br></pre></td></tr></table></figure>
+<p>上面的Dockerfile 命令将会报错找不到helloworld.txt，或者/app/helloworld.txt 里面内容根本不是”hello world“。前面我们讲到，每运行一个指令，会生成一个新的中间镜像，上面的例子中，当第一个RUN指令运行cd命令后，仅仅是属于当前进程中的一个内存状态变化。而执行第二个RUN指令时，根据Dockerfile 的分层存储机制，启动的是一个全新的容器进程，自然不可能继承第一层的内存状态变化。所以如果需要改变各层之间的工作目录，则需要使用<strong>WORKDIR</strong></p>
+</li>
+<li><p>4 <strong>COPY</strong> 格式COPY &lt;src> &lt;dest><br>COPY 指令用于将主机的资源文件在生成镜像的时候拷贝到镜像中。src 可以是指定多个源，但其路径必须在上下文中。此外src可以使用通配符，例如:<br>COPY ./home/con* /mydir/ 这样以con 开头的文件拷贝到都被拷贝到目标目录中。值得注意的是，如果源路径是一个目录，那么目录下的内容都会被拷贝到镜像中，但是目录本身不会被拷贝(这点与linux 的cp命令有区别)； dest 必须是目标镜像中的绝对路径和或者基于<strong>WORKDIR</strong> 指令的相对路径，同样目标路径也可以使用通配符。<br>若目标路径是一个目录，则必须以符号 <strong>/</strong> 结束，如果目标镜像路径不存在，则在构建时创建完整的路径。</p>
+</li>
+<li><p>5 <strong>ADD</strong> 格式ADD &lt;src> &lt;dest><br>ADD 命令与COPY命令很相似。ADD的src可以是一个指向网络文件的URL，同事src还可以是指向本地的压缩归档文件，在拷贝的过程中会被压缩提取。</p>
+</li>
+<li><p>6 <strong>RUN</strong> 格式 RUN &lt;command> (shell格式)或者 RUN <a href="exec 推荐格式">“executable”, “param1”, “param2”</a><br>RUN命令的两种格式表示在容器中的两种运行方式。当使用shell 格式的时候，则通过/bin/sh -c 的方式运行。而当使用的是exec格式的时候，命令是直接以JSON的方式传递给Docker 解析执行。因为exec不会在shell中执行，故环境变量的参数不会被替换。如果想以exec的方式调用shell程序，可以写成<strong>CMD[“sh”,”-c”,”echo”,”${HOME}”</strong>。如果想利用RUN命令一次运行多条执行，可以利用符号 <strong>&amp;&amp;</strong> 进行连接。如下面的例子:</p>
+  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span> sh -c "yum -y install gcc \</span><br><span class="line">     &amp;&amp; yum -y install gcc-c++\</span><br><span class="line">     &amp;&amp; yum -y install make"</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>7 <strong>CMD</strong> CMD指令有三种格式:<br>&lt;1>CMD &lt;command> （shell格式）<br>&lt;2>CMD <a href="exec 推荐格式">“executable”,”param1”,”param2”</a><br>&lt;3>CMD <a href="主要是为ENTRYPOINT 指令提供参数">“param1”,”param2”</a><br>CMD的主要作用看起来也是主要执行一些命令，但CMD指令与RUN指令不同，RUN指令主要是在构建镜像的时候执行命令，CMD在构建的时候并不执行任何命令，而是在启动容器时将CMD指令作为第一条执行的命令。但是如果用户在命令行运行<strong>docker run</strong> 命令时同时指定了命令参数，则会CMD指令中的命令会被覆盖。并且需要强调的一点就是Dockerfile中虽然可以有多条CMD命令，但是只会有最后一条CMD命令有效。</li>
+</ul>
+<ul>
+<li><p>8 <strong>ENTRYPOINT</strong> 格式ENTRYPOINT &lt;command>（shell格式）或者ENTRYPOINT[“executable”,”param1”,”param2”] (exec格式，推荐格式)<br>ENTRYPOINT 与 CMD指令的用途相似，都是在镜像启动时执行命令，但它们又有些不同:<br>当使用<strong>shell</strong>格式时，ENTRYPOINT 会忽略<strong>docker run</strong> 以及 CMD 所传递的参数，并且此进程会运行在/bin/sh -c 的进程中，成为/bin/sh -c 的子进程，这意味着ENTRYPOINT这条指令的进程号不会是1，且不能接受Unix信号，即如果执行 docker stop &lt;container>命令时，ENTRYPOINT进程无法无法接收SIGTERM 信号。</p>
+<p>而使用<strong>exec</strong>格式时，ENTRYPOINT 无需shell进程，直接让Docker 可执行程序成为PID为1的进程。并且docker run 传入的命令参数可以覆盖CMD的指令内容，并附加到ENTRYPOINT指令的参数中。其实从ENTRYPOINT和CMD的对比中可以看出CMD既可以是参数也可以是命令，而ENTRYPOINT只能是命令，docker run提供的命令参数可以覆盖CMD，但却不能覆盖ENTRYPOINT 的参数。</p>
+<p>针对CMD和ENTRYPOINT有以下的使用建议:如果Docker镜像的用途是作为应用程序或者服务，例如Mysql 则使用EXEC格式的ENTRYPOINT指令，启动命令相对固定，只需要提供额外的参数进行替换便可启动容器。而如果想为容器设置启动命令，则使用CMD指令，通过docker run 指定命令参数进行替换。<br>  除此之外，如果我们使用了ENTRYPOINT，但是我们又想设置启动命令，则可以使用 –entrypoint 参数，可以同时覆盖CMD以及ENTRYPOINT指令.</p>
+</li>
+<li><p>9 <strong>EXPOSE</strong> EXPOSE &lt;port1> &lt;port2> …<br>EXPOSE指令的作用是声明容器提供服务的端口，这仅仅是一个声明，并不会在运行容器时因为这个声明而开启所声明的端口。使用EXPOSE有两个好处:方便容器的使用者理解容器服务的守护端口，方便做端口映射，另一个则是使用 <strong>docker run -P </strong> 的时候，能够随机映射EXPOSE声明的端口。要特别注意的是，我们平时映射端口使用 <strong>docker run -p &lt;宿主端口&gt;:&lt;容器端口&gt;</strong> 命令，而EXPOSE只是暴露端口的声明，并不会做端口映射。</p>
+</li>
+</ul>
+<h2 id="Dockerfile-的最佳实践"><a href="#Dockerfile-的最佳实践" class="headerlink" title="Dockerfile 的最佳实践"></a>Dockerfile 的最佳实践</h2><p>  一个例子(基于alpine构建redis镜像 ):<br>  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine:<span class="number">3.11</span>.<span class="number">6</span></span><br><span class="line"><span class="comment">#VOLUME "/data"</span></span><br><span class="line"><span class="keyword">WORKDIR</span> /opt</span><br><span class="line">RUN mkdir -p /opt/open_source/redis</span><br><span class="line">WORKDIR /opt/open_source/redis</span><br><span class="line">COPY ./redis ./redis-start.sh ./</span><br><span class="line">RUN sed -i "s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g" /etc/apk/repositories \</span><br><span class="line">         &amp;&amp; apk update \</span><br><span class="line">         &amp;&amp; apk upgrade \</span><br><span class="line">         &amp;&amp; apk add --no-cache --virtual build-deps \</span><br><span class="line">         gcc \</span><br><span class="line">         make \</span><br><span class="line">         linux-headers \</span><br><span class="line">         musl-dev</span><br><span class="line">RUN make &amp;&amp; make install</span><br><span class="line">EXPOSE 6379</span><br><span class="line">ENTRYPOINT ["sh","./redis-start.sh"]</span><br></pre></td></tr></table></figure></p>
+<p> 最佳实践的一些建议:<br> Dockefile的编写的几个基本准则:<br> 1)构建的镜像体积尽量小。<br> 2)构建的镜像层数尽量少。<br> 3)构建过程尽量使用缓存，提供构建速度。<br> 4)保持dockerfile的可读性，可维护性。</p>
+<ul>
+<li><p>关于FORM语句<br>FROM 语句中应该选择合适的基础镜像，且尽量明确版本。如果是基于操作系统的镜像，现在主流的镜像有<strong>alpine, debian(官方推荐), centos，ubantu</strong>等，在选择操作系统镜像时，我们一般考虑的准则是:1.普遍适用。2.越小越好。目前alpine 支持大多数linux发行版，且经过深度优化，成为了更多人选择的操作系统基础镜像，目前大概只有5M左右(与之相比ubantu有200M左右)，且拥有非常好的包管理机制。</p>
+</li>
+<li><p>关于RUN语句<br>将复杂的或者长的RUN语句利用符号”\“分割成多行，有利于保持Dockerfile 的可读性与维护性，且如果将多个RUN语句合成一个，有利于减少镜像层数。<br>RUN 语句如果使用<strong>apt-get</strong>时需要特别注意:<br>如果将<strong>apt-get update</strong>放在独立的一条的RUN语句中会导致缓存问题以及后续的<strong>apt-get install</strong> 命令安装软件可能失败。举个例子:<br>原来的dockerfile安装了nginx</p>
+   <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">14.04</span></span><br><span class="line"><span class="keyword">RUN</span> apt-get update</span><br><span class="line">RUN apt-get install -y nginx</span><br></pre></td></tr></table></figure>
+<p> 后续你想再安装redis</p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">14.04</span></span><br><span class="line"><span class="keyword">RUN</span> apt-get update</span><br><span class="line">RUN apt-get install -y nginx redis</span><br></pre></td></tr></table></figure>
+<p> 由于docker的缓存机制，此次的 <strong>apt-get update</strong> 并未真正执行，导致install 的软件包可能是过时的包。<br> 所以如果在RUN命令中如果使用<strong>apt-get update</strong>，最好的方式是与<strong>apt-get install</strong> 一起使用，并且参数通过字母排序(避免安装重复包):</p>
+ <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">14.04</span></span><br><span class="line"><span class="keyword">RUN</span> apt-get update \</span><br><span class="line">    &amp;&amp; RUN apt-get install -y nginx \</span><br><span class="line">    redis</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>关于COPY和ADD语句<br>COPY 与 ADD很相似，都主要是提供拷贝功能。但是建议使用COPY命令，因为COPY命令的透明度高。ADD 命令除了拷贝功能以外还增加了远程拷贝功能以及文档提取功能，对于远程拷贝，可以使用<strong>curl</strong>或<strong>wget</strong>代替,来减少镜像的层数。如下:</p>
+  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ADD</span> http://xxx/xxx/bigdata.tar.xz /data</span><br><span class="line">RUN tar -xJf /data/bigdata.tar.xz -C /data</span><br><span class="line">RUN make -C /data/ all</span><br></pre></td></tr></table></figure>
+<p>  建议:</p>
+  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">RUN</span> mkdir -p /data \</span><br><span class="line">    &amp;&amp; curl -SL http://xxx/xxx/bigdata.tar.xz \</span><br><span class="line">    | tar -xJC /data \</span><br><span class="line">    &amp;&amp; make -C /data all</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关于WORKDIR语句<br>为了保持可读性与维护性，建议WORKDIR使用绝对路径。少使用诸如<strong>RUN cd xxx &amp;&amp; do someting</strong>，这样会增加排查问题的成本。</p>
+</li>
+<li><p>使用.dockerignore<br>使用.dockerignore 文件来排除构建不需要的文件与目录，例如前端文件目录: <strong>node_modules</strong>。</p>
+</li>
+<li><p>使用多阶段构建(multi-stage build)<br>场景1:<br>在构建镜像的过程中我们会遇到<strong>编译环境</strong>，<strong>运行环境</strong>。编译环境主要把代码编译成可执行的二进制文件，而运行环境主要运行编译环境产出的可执行文件。如果使用传统的docker 构建，编译环境会产出一些多余的中间文件，而大多数情况下，这些中间文件有悖于尽可能减小镜像体积的准则。而在docker 17.05版本后，支持了多阶段的构建方式，利用多个FROM语句，可以将一个编译环境的最终产物，拷贝到运行环境。并且最终形成的运行镜像，不会附带编译环境产出的中间文件。<br>示例:Java项目:编译环境(jdk+gradle) + 运行环境(jdk)</p>
+  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine-gradle:latest as builder</span><br><span class="line"><span class="keyword">RUN</span> mkdir -p /opt/otsdata/example/</span><br><span class="line">WORKDIR /opt/otsdata/example</span><br><span class="line">COPY ./example_project/ /opt/otsdata/example/</span><br><span class="line">RUN gradle build</span><br><span class="line">FROM anapsix/alpine-java:8u202b08_jdk</span><br><span class="line">COPY --from=builder /opt/otsdata/example/build/libs/example-0.0.1-SNAPSHOT.jar /opt/otsdata/example/</span><br><span class="line">WORKDIR /opt/otsdata/example</span><br><span class="line">EXPOSE 8080</span><br><span class="line">ENTRYPOINT ["java", "-jar", "example-0.0.1-SNAPSHOT.jar"]</span><br></pre></td></tr></table></figure>
+<p>场景2:<br>Springboot 从2.3.0.M1版本开始 提供了layertools 工具结合docker多阶段构建的功能来加快镜像的构建效率。<br>先来说一下layertools:<br>众所周知，spring boot是以fat jar进行构建打包的，程序开发到一定程度，jar包相对比较大(80M 100M)。对于一个程序来说，业务代码的修改频率远高于依赖库的修改频率，且一旦业务代码有变化，就需要整个重新打包上传，这无疑大大增加了网络的压力(如果镜像服务走的是公网将会更加糟糕)，docker 镜像本来就是分层结构，有没有可能做到我只上传修改的镜像层，而不是修改几行代码就整层进行上传呢？对于程序来说，，能不能从这方面切入呢？<br>layertools 正好为不同更新频率的内容提供了分离机制,在这基础上，docker 镜像利用此种特性，大多数情况下只需要上传已经分离出来的业务代码层，而不需要每一次都进行整一个镜像的重新上传。<br>jar包分层前后结构对比:</p>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 分层前</span><br><span class="line">META-INF/</span><br><span class="line">  MANIFEST.MF</span><br><span class="line">org/</span><br><span class="line"> springframework/</span><br><span class="line">   boot/</span><br><span class="line">     loader/</span><br><span class="line">       ...</span><br><span class="line">BOOT-INF/</span><br><span class="line">  classes/</span><br><span class="line">    ...</span><br><span class="line">  lib/</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"> #</span> 分层后:</span><br><span class="line">META-INF/</span><br><span class="line">   MANIFEST.MF</span><br><span class="line">org/</span><br><span class="line">  springframework/</span><br><span class="line">    boot/</span><br><span class="line">      loader/</span><br><span class="line">        ...</span><br><span class="line">BOOT-INF/</span><br><span class="line">  layers/</span><br><span class="line">    &lt;name&gt;/</span><br><span class="line">      classes/</span><br><span class="line">        ...</span><br><span class="line">      lib/</span><br><span class="line">        ...</span><br><span class="line"> layers.idx</span><br></pre></td></tr></table></figure>
+<p>  其中分层后包括以下四种:<br>  – dependencies(依赖项)<br>  – snapshot-dependencies(用于快照依赖项)<br>  – resources(用于静态资源)<br>  – application(应用程序代码和资源)</p>
+<p>  使用示例:<br>  1）在springboot 的pom.xml 加上如下配置:</p>
+  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">layout</span>&gt;</span>LAYERED_JAR<span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>  1) 重新打包,并验证:</p>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>重新打包</span><br><span class="line">mvn clean package</span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>验证</span><br><span class="line">java -Djarmode=layertools -jar target/demo-0.0.1-SNAPSHOT.jar list</span><br></pre></td></tr></table></figure>
+<p>  输出:<br>  <img src="2.jpg" alt="IMAGE"></p>
+<p>  3）编写dockerfile</p>
+  <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> anapsix/alpine-java:<span class="number">8</span>u202b08_jdk as builder</span><br><span class="line"><span class="keyword">WORKDIR</span> /opt/otsdata/layer_example</span><br><span class="line">ARG JAR_FILE=./demo/target/demo-0.0.1-SNAPSHOT.jar</span><br><span class="line">COPY $&#123;JAR_FILE&#125; demo.jar</span><br><span class="line">RUN java -Djarmode=layertools -jar demo.jar extract</span><br><span class="line">    </span><br><span class="line">FROM anapsix/alpine-java:8u202b08_jdk</span><br><span class="line">WORKDIR /opt/otsdata/layer_example</span><br><span class="line">COPY --from=builder /opt/otsdata/layer_example/dependencies/ ./</span><br><span class="line">COPY --from=builder /opt/otsdata/layer_example/snapshot-dependencies/ ./</span><br><span class="line">COPY --from=builder /opt/otsdata/layer_example/resources/ ./</span><br><span class="line">COPY --from=builder /opt/otsdata/layer_example/application/ ./</span><br><span class="line">ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>  至此，我们学习了dockerfile 的基本语法和如何写简洁高效的dockerfile。对于我而言，我觉得dockerfile的编写工作给我一种linux shell思维+docker分层结构的思维的结合体，我觉得只要深刻了解这两方面的知识，那么编写dockerfile将会变得简单。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/容器/" rel="tag"># 容器</a>
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/springboot/" rel="tag"># springboot</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/27/Java对象头与锁的升级/" rel="next" title="Java对象头与锁的升级">
+                <i class="fa fa-chevron-left"></i> Java对象头与锁的升级
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-应用概述"><span class="nav-number">1.</span> <span class="nav-text">Docker 应用概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dockerfile"><span class="nav-number">2.</span> <span class="nav-text">Dockerfile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dockerfile-的最佳实践"><span class="nav-number">3.</span> <span class="nav-text">Dockerfile 的最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>

@@ -89,7 +89,7 @@
 <meta property="og:description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/image-20201025150249458.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253107@b7e78d620b06d68725dc89786a93f6f2%20(1">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253107@b7e78d620b06d68725dc89786a93f6f2.png">
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253177@b56f42cc7fb391d61895fad3f8006991.png">
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253154@b2a77e904b4652999759154e258d3886.png">
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/rocketmq_architecture_1.png">
@@ -108,7 +108,7 @@
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/192e9b87b7a5b68cac352fdeb81dc93b161543.png">
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/java-concurrent-disruptor-ring-buffer.png">
 <meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/20200315233704730.jpg">
-<meta property="og:updated_time" content="2023-12-05T08:29:36.020Z">
+<meta property="og:updated_time" content="2023-12-05T08:45:34.787Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MQ的基础使用与原理">
 <meta name="twitter:description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
@@ -568,7 +568,7 @@
 <p>​       目前共四种Exchange。</p>
 <p>​      <strong>1.Direct(直连交换机)</strong></p>
 <p>​     消息中的路由键(routing key)如果和binding key 一致， 交换器就将消息发到对应的队列中。</p>
-<p>​     <img src="1579253107@b7e78d620b06d68725dc89786a93f6f2 (1" alt="IMAGE">.png)</p>
+<p>​     <img src="1579253107@b7e78d620b06d68725dc89786a93f6f2.png" alt="IMAGE"></p>
 <p>​      <strong>2.Topic（主题交换机）</strong></p>
 <p>​     Topic 与Direct 对比， routing key 支持通配符与 bingding key 进行匹配。例如 usa.# 匹配下图中的usa.news, usa.weather。</p>
 <p>​     <strong>“#”</strong> : 代表至少匹配一个</p>
@@ -778,12 +778,13 @@
 </ol>
 </li>
 </ul>
-<pre><code>&lt;img src=&quot;锁.png&quot; alt=&quot;锁&quot; style=&quot;zoom: 30%;&quot; /&gt;&lt;img src=&quot;原子性.png&quot; alt=&quot;原子性&quot; style=&quot;zoom: 30%;&quot; /&gt;
+<pre><code>&lt;img src=&quot;锁.png&quot; alt=&quot;锁&quot; style=&quot;zoom: 30%;&quot; /&gt;
+&lt;img src=&quot;原子性.png&quot; alt=&quot;原子性&quot; style=&quot;zoom: 30%;&quot; /&gt;
 </code></pre><ol start="2">
 <li><p>伪共享。</p>
 <p><img src="69ce8ffbe7a4ebee01c377dac174842d433755.png" alt="69ce8ffbe7a4ebee01c377dac174842d433755" style="zoom: 50%;"></p>
 <p>上图是CPU的基本结构，L1、L2、L3分别表示一级缓存、二级缓存、三级缓存，越靠近CPU的缓存，速度越快，容量也越小。所以L1缓存很小但很快，并且紧靠着在使用它的CPU内核；L2大一些，也慢一些，并且仍然只能被一个单独的CPU核使用；L3更大、更慢，并且被单个插槽上的所有CPU核共享；最后是主存，由全部插槽上的所有CPU核共享。当CPU执行运算的时候, 它先去L1查找所需的数据、再去L2、然后是L3, 如果最后这些缓存中都没有, 所需的数据就要去主内存拿. 走得越远, 运算耗费的时间就越长. 所以如果你在做一些很频繁的事, 你要尽量确保数据在L1缓存中。另外, 线程之间共享一份数据的时候, 如果修改了数据, 需要一个线程把数据写回主存, 而另一个线程访问主存中相应的数据。（MESI： 缓存一致性原理）</p>
-<p>| 从CPU到                                  | 大约需要的CPU周期 | 大约需要的时间 |<br>| :————————————— | :—————- | :————- |<br>| 主存                                     |                   | 约60-80ns      |<br>| QPI 总线传输(between sockets, not drawn) |                   | 约20ns         |<br>| L3 cache                                 | 约40-45 cycles    | 约15ns         |<br>| L2 cache                                 | 约10 cycles       | 约3ns          |<br>| L1 cache                                 | 约3-4 cycles      | 约1ns          |<br>| 寄存器                                   | 1 cycle           |                |</p>
+<p>| 从CPU到                                  | 大约需要的CPU周期 | 大约需要的时间 |<br>| ————————————— | —————- | ————- |<br>| 主存                                     |                   | 约60-80ns      |<br>| QPI 总线传输(between sockets, not drawn) |                   | 约20ns         |<br>| L3 cache                                 | 约40-45 cycles    | 约15ns         |<br>| L2 cache                                 | 约10 cycles       | 约3ns          |<br>| L1 cache                                 | 约3-4 cycles      | 约1ns          |<br>| 寄存器                                   | 1 cycle           |                |</p>
 <p>缓存行:</p>
 <p>Cache是由很多个cache line组成的. 每个cache line通常是64字节, 并且它有效地引用主内存中的一块地址. 一个Java的long类型变量是8字节, 因此在    一个缓存行中可以存8个long类型的变量。<br>CPU每次从主存中拉取数据时, 会把相邻的数据也存入同一个CacheLine。<br>在访问一个long数组的时候, 如果数组中的一个值被加载到缓存中, 它会自动加载另外7个. 因此你能非常快的遍历这个数组. 事实上, 你可以非常快速的遍历在连续内存块中分配的任意数据结构。</p>
 <p>缓存行的作用:</p>

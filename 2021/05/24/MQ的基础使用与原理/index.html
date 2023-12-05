@@ -69,7 +69,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="java,mq,">
 
 
 
@@ -81,38 +81,38 @@
 
 
 <meta name="description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
-<meta name="keywords" content="朱育青,Java,高并发,Python,Kam,大数据,技术博客,技术,github">
+<meta name="keywords" content="java,mq">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kam Blog">
-<meta property="og:url" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/index.html">
+<meta property="og:title" content="MQ的基础使用与原理">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/index.html">
 <meta property="og:site_name" content="Kam Blog">
 <meta property="og:description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/image-20201025150249458.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/1579253107@b7e78d620b06d68725dc89786a93f6f2%20(1">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/1579253177@b56f42cc7fb391d61895fad3f8006991.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/1579253154@b2a77e904b4652999759154e258d3886.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_architecture_1.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_architecture_2.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_architecture_3.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_design.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_design_2.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/pagecache.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/usercopy.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/mmapdma.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/sendfile1.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/sendfile2.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/RMQVSKAFKA.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/up-65316e806f87096147bf613ba0990679149.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/69ce8ffbe7a4ebee01c377dac174842d433755.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/192e9b87b7a5b68cac352fdeb81dc93b161543.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/java-concurrent-disruptor-ring-buffer.png">
-<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/20200315233704730.jpg">
-<meta property="og:updated_time" content="2023-12-05T08:25:45.304Z">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/image-20201025150249458.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253107@b7e78d620b06d68725dc89786a93f6f2%20(1">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253177@b56f42cc7fb391d61895fad3f8006991.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/1579253154@b2a77e904b4652999759154e258d3886.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/rocketmq_architecture_1.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/rocketmq_architecture_2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/rocketmq_architecture_3.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/rocketmq_design.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/rocketmq_design_2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/pagecache.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/usercopy.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/mmapdma.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/sendfile1.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/sendfile2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/RMQVSKAFKA.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/up-65316e806f87096147bf613ba0990679149.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/69ce8ffbe7a4ebee01c377dac174842d433755.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/192e9b87b7a5b68cac352fdeb81dc93b161543.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/java-concurrent-disruptor-ring-buffer.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/20200315233704730.jpg">
+<meta property="og:updated_time" content="2023-12-05T08:29:36.020Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kam Blog">
+<meta name="twitter:title" content="MQ的基础使用与原理">
 <meta name="twitter:description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
-<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/image-20201025150249458.png">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/image-20201025150249458.png">
 
 
 
@@ -142,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/">
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/">
 
 
 
 
 
-  <title> | Kam Blog</title>
+  <title>MQ的基础使用与原理 | Kam Blog</title>
   
 
 
@@ -285,7 +285,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2021/05/24/MQ的基础使用与原理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Kam">
@@ -302,7 +302,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">MQ的基础使用与原理</h1>
         
 
         <div class="post-meta">
@@ -314,8 +314,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-16T23:45:55+08:00">
-                2020-12-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-24T10:09:30+08:00">
+                2021-05-24
               </time>
             
 
@@ -324,6 +324,28 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -836,6 +858,14 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/mq/" rel="tag"># mq</a>
+          
+        </div>
+      
 
       
       
@@ -952,7 +982,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

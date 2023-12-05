@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="Qm24c-pum4yQd3YVAjTcOCWnGDzWufAr5X4J7o_NegQ">
+<meta name="keywords" content="朱育青, Kam, 大数据, Java">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
+<meta name="keywords" content="朱育青,Java,高并发,Python,Kam,大数据,技术博客,技术,github">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kam Blog">
+<meta property="og:url" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/index.html">
+<meta property="og:site_name" content="Kam Blog">
+<meta property="og:description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/image-20201025150249458.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/1579253107@b7e78d620b06d68725dc89786a93f6f2%20(1">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/1579253177@b56f42cc7fb391d61895fad3f8006991.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/1579253154@b2a77e904b4652999759154e258d3886.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_architecture_1.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_architecture_2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_architecture_3.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_design.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/rocketmq_design_2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/pagecache.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/usercopy.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/mmapdma.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/sendfile1.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/sendfile2.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/RMQVSKAFKA.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/up-65316e806f87096147bf613ba0990679149.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/69ce8ffbe7a4ebee01c377dac174842d433755.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/192e9b87b7a5b68cac352fdeb81dc93b161543.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/java-concurrent-disruptor-ring-buffer.png">
+<meta property="og:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/20200315233704730.jpg">
+<meta property="og:updated_time" content="2023-12-05T08:25:45.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kam Blog">
+<meta name="twitter:description" content="MQ的基础使用与原理1. MQ 的基本概念1.1 MQ 的应用场景MQ的在系统中主要有三方面:  异步调用 (注册发短信)  系统解耦 (订单减库存)  流量削峰 (秒杀)   1.2 一般MQ的基本角色 生产者(producer): 负责生产并发送消息。  消息代理(broker): 负责接收消息，存储消息，消息转发。  消费者(consumer): 负责消费消息。  命名服务(nameserv">
+<meta name="twitter:image" content="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/image-20201025150249458.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/">
+
+
+
+
+
+  <title> | Kam Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kam Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://kamzhuyuqing.github.io/2020/12/16/MQ的基础使用与原理/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Kam">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kam Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-16T23:45:55+08:00">
+                2020-12-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="MQ的基础使用与原理"><a href="#MQ的基础使用与原理" class="headerlink" title="MQ的基础使用与原理"></a>MQ的基础使用与原理</h2><h3 id="1-MQ-的基本概念"><a href="#1-MQ-的基本概念" class="headerlink" title="1. MQ 的基本概念"></a>1. MQ 的基本概念</h3><h4 id="1-1-MQ-的应用场景"><a href="#1-1-MQ-的应用场景" class="headerlink" title="1.1 MQ 的应用场景"></a>1.1 MQ 的应用场景</h4><p>MQ的在系统中主要有三方面:</p>
+<ul>
+<li><p>异步调用 (注册发短信)</p>
+</li>
+<li><p>系统解耦 (订单减库存)</p>
+</li>
+<li><p>流量削峰 (秒杀)</p>
+</li>
+</ul>
+<h4 id="1-2-一般MQ的基本角色"><a href="#1-2-一般MQ的基本角色" class="headerlink" title="1.2 一般MQ的基本角色"></a>1.2 一般MQ的基本角色</h4><ul>
+<li><p>生产者(producer): 负责生产并发送消息。</p>
+</li>
+<li><p>消息代理(broker): 负责接收消息，存储消息，消息转发。</p>
+</li>
+<li><p>消费者(consumer): 负责消费消息。</p>
+</li>
+<li><p>命名服务(nameserver): 负责存储注册信息(元数据信息)，一般是三代MQ才有的组件设计，如kafka的zookeeper以及rocketmq 的nameserver 组件。</p>
+</li>
+</ul>
+<h4 id="1-3-队列的分类"><a href="#1-3-队列的分类" class="headerlink" title="1.3 队列的分类"></a>1.3 队列的分类</h4><ul>
+<li><p>优先级队列</p>
+<p>优先级队列“破坏”了队列<strong>FIFO</strong>的数据机构特性，优先级高的消息可以被具备优先消费的特权。(只有生产者速度大于消费者速度的时候，优先级队列才有意义)(VIP客户，普通客户)</p>
+</li>
+<li><p>延迟队列</p>
+<p>当消息发送后，等待特定的时间后，消费者才能拿到这个消息进行消费。实际中多采用队列的延迟机制，而不是消息的延迟机制。(例如订单完成后1分钟给用户发短信。)</p>
+</li>
+<li><p>死信队列</p>
+<p>当某些消息不能被正确消费(如1.消息被否定确认。 2.消息在队列的存活时间超过设置的TTL时间。3.消息队列的数量已经超过最大队列长度。)，未确保消息不会被无故丢弃，一般将这一类的信息放置在一个特殊的队列里面重新处理，这一类队列称作: 死信队列。(例如生成订单后如果30分钟内未付款则取消订单。)</p>
+</li>
+<li><p>重试队列</p>
+<p>重试队列其实可以看成是一种回退队列，重试队列和死信队列一样，都是为消息不能被正确消费此类异常信息提供了保障机制。重试队列一般分成多个重试等级，每个重试等级一般也会设置重新投递延时，重试次数越多投递延时就越大。重试越多次重新投递的时间就越久，为此需要设置一个上限，超过投递次数就入死信队列。</p>
+</li>
+</ul>
+<h4 id="1-4-消费模式"><a href="#1-4-消费模式" class="headerlink" title="1.4 消费模式"></a>1.4 消费模式</h4><ul>
+<li><p>push 模式</p>
+<p>机制: broker(消息代理)主动的将消息退给consumer(消费者)。</p>
+<p>优点: 消息实时性较高。</p>
+<p>缺点: 当消费者消费能力弱的时候(例如消费者处理一条数据流程相对复杂)，那么就会出现慢消费问题，而broker还是不断地给消费者 push 消息，最终可能下游消费者内存撑不住，崩溃异常。</p>
+</li>
+<li><p>pull 模式</p>
+<p>机制: consumer(消费者)主动与broker(消息代理)建立连接，拉取消息。</p>
+<p>优点: 可以自主控制消费速率，基本不会有下游消费者崩溃的问题，处理大量消息有优势。</p>
+<p>缺点: 消息实时性不如push模式，需要设置合适的拉取频率，设置的频率高可能会产生无效的pull请求(无效的RPC开销)，设置的频率低可能会导致消息堆积。</p>
+</li>
+</ul>
+<h3 id="2-消息队列对比"><a href="#2-消息队列对比" class="headerlink" title="2. 消息队列对比"></a>2. 消息队列对比</h3><h4 id="2-1-各类MQ对比"><a href="#2-1-各类MQ对比" class="headerlink" title="2.1 各类MQ对比"></a>2.1 各类MQ对比</h4><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>RocketMQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>所属社区/公司</td>
+<td>Apache</td>
+<td>Mozilla Public License</td>
+<td>Ali</td>
+<td>Apache</td>
+</tr>
+<tr>
+<td>成熟度</td>
+<td>成熟</td>
+<td>成熟</td>
+<td>比较成熟</td>
+<td>成熟</td>
+</tr>
+<tr>
+<td>客户端支持语言</td>
+<td>Java、C、C++、C#、Ruby、Perl、Python、PHP等</td>
+<td>Java，Python、Ruby、.NET、C、PHP等</td>
+<td>Java、C++  Go</td>
+<td>Java、.NET、PHP、Ruby、Python、Go等</td>
+</tr>
+<tr>
+<td>实现语言</td>
+<td>Java</td>
+<td>Erlang</td>
+<td>Java</td>
+<td>Scala</td>
+</tr>
+<tr>
+<td>协议</td>
+<td>OPENWIRE XMPP AMQP 等</td>
+<td>AMQP</td>
+<td>自定义协议</td>
+<td>自定义协议</td>
+</tr>
+<tr>
+<td>消息存储</td>
+<td>内存，磁盘，支持少量堆积</td>
+<td>内存，磁盘，支持少量堆积</td>
+<td>磁盘，支持大量堆积</td>
+<td>内存，磁盘，支持大量堆积</td>
+</tr>
+<tr>
+<td>负载均衡</td>
+<td>支持</td>
+<td>支持(但不太友好)</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>集群方式</td>
+<td>支持简单的集群模式(主备)</td>
+<td>只支持简单的集群模式(复制模式)</td>
+<td>支持多Master,多Master-Slave模式</td>
+<td>天然的Leader-Slave 集群模式</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>高，基于主从架构</td>
+<td>高，基于主从架构</td>
+<td>非常高，基于分布式架构</td>
+<td>非常高，基于分布式架构</td>
+</tr>
+<tr>
+<td>时效性</td>
+<td>毫秒级</td>
+<td>微秒级，延时最低</td>
+<td>毫秒级</td>
+<td>毫秒级以内</td>
+</tr>
+<tr>
+<td>单机吞吐</td>
+<td>万级，比Kafka和RocketMQ都低一个等级</td>
+<td>万级，比Kafka和RocketMQ都低一个等级</td>
+<td>十万级，高吞吐MQ</td>
+<td>十万级，高吞吐MQ</td>
+</tr>
+<tr>
+<td>TOPIC数量影响吞吐</td>
+<td>-</td>
+<td>-</td>
+<td>可以支持上百个topic而不会引起吞吐量急剧下降</td>
+<td>在topic 从几十个到几百个时，吞吐量会急剧下降。</td>
+</tr>
+<tr>
+<td>消息确认机制</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>消息回溯</td>
+<td>不支持</td>
+<td>不支持</td>
+<td>支持回溯到对应的时间</td>
+<td>支持回溯到对应的offset</td>
+</tr>
+<tr>
+<td>顺序消息</td>
+<td>不支持</td>
+<td>不支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>push&amp;&amp;pull</td>
+<td>支持push 和 pull</td>
+<td>支持push 和 pull</td>
+<td>支持push 和 pull</td>
+<td>支持pull</td>
+</tr>
+<tr>
+<td>WEB管理</td>
+<td>自带Web界面</td>
+<td>自带漂亮的Web界面</td>
+<td>有独立的Web管理页面</td>
+<td>Kafka-Manager等</td>
+</tr>
+<tr>
+<td>应用场景</td>
+<td>主要用于异步，系统解耦的功能上基本不用于大规模数据场景的情况。偶尔有丢失数据的风险。</td>
+<td>erlang语言开发，安全，性能很好，管理界面友好，互联网公司使用案例较多。但较少用于对吞吐量有一定要求的项目上。</td>
+<td>吞吐量很高，支持大量的topic。但目前来说相对于其他几种消息队列来说并不是很成熟，社区活跃度低，相关技术书籍较少。</td>
+<td>吞吐量高，在大数据实时计算以及日志收集等场景大规模使用，社区活跃度高，已经成为业界的标准。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-2-RabbitMQ架构"><a href="#2-2-RabbitMQ架构" class="headerlink" title="2.2 RabbitMQ架构"></a>2.2 RabbitMQ架构</h4><p><img src="image-20201025150249458.png" alt="IMAGE"></p>
+<p><strong>Connetion&amp;Channel</strong> : </p>
+<p>生产者与消费者通过connection 与broker 连接，connection 实际是实现了AMQP协议的TCP连接，而channel(信道) 是建立在connection 上的虚拟连接。（为什么有了TCP还需要信道，因为在实际应用中，会有多个生产者与消费者同时发送或消费消息，若频繁创建TCP和销毁TCP来达到此需求，则对操作系统的消耗是比较高的，并且TCP连接资源也是有限的，所以采用channel 设计对单一的connection进行复用(类比JAVA NIO 的多路复用)，来节约TCP连接资源与提高并发能力。）</p>
+<p><strong>Routing Key</strong></p>
+<p>消息发送给交换器时，消息将拥有一个路由键（默认为空），交换器根据这个路由键将消息发送到匹配的队列中。</p>
+<p><strong>Exchange</strong></p>
+<p>交换机，消息到达代理服务器的第一站，根据分发规则，匹配查询表中的路由键（Fanout Exchange除外），分发消息到队列中去。</p>
+<p>​       目前共四种Exchange。</p>
+<p>​      <strong>1.Direct(直连交换机)</strong></p>
+<p>​     消息中的路由键(routing key)如果和binding key 一致， 交换器就将消息发到对应的队列中。</p>
+<p>​     <img src="1579253107@b7e78d620b06d68725dc89786a93f6f2 (1" alt="IMAGE">.png)</p>
+<p>​      <strong>2.Topic（主题交换机）</strong></p>
+<p>​     Topic 与Direct 对比， routing key 支持通配符与 bingding key 进行匹配。例如 usa.# 匹配下图中的usa.news, usa.weather。</p>
+<p>​     <strong>“#”</strong> : 代表至少匹配一个</p>
+<p>​     <strong>“*“</strong>： 代表匹配0个或者多个</p>
+<p>​     <img src="1579253177@b56f42cc7fb391d61895fad3f8006991.png" alt="IMAGE"></p>
+<p>​    <strong>3.Fanout(广播交换机)</strong></p>
+<p>​    不通过routing key 进行匹配， 将所有消息发送到与exchange 绑定的 queue中。</p>
+<p><img src="1579253154@b2a77e904b4652999759154e258d3886.png" alt="IMAGE"> </p>
+<p>​    <strong>4.Header(头交换机)</strong></p>
+<p>​    Header 交换机同样忽略 routing key 匹配规则，它使用的是header 绑定的键值对进行x-match-any（默认）或者x-match-all 模式进行匹配(其他方面 direct 匹    配模式没什么两样)，但性能较差，目前已经很少使用。</p>
+<p>   <strong>Binding Key</strong></p>
+<p>​    队列需要通过绑定键（默认为空）绑定到交换器上，交换器将消息的路由键与所绑定队列的绑定键进行匹配，正确匹配的消息将发送到队列中。路由键是偏向生产的概念，而绑定键是偏向消费的概念。</p>
+<p>   <strong>Queue</strong></p>
+<p>  消息队列，作为 消息的容器，作为消息的终点，等待消费者从队列拿走消息。</p>
+<h4 id="2-3-RocketMQ架构"><a href="#2-3-RocketMQ架构" class="headerlink" title="2.3 RocketMQ架构"></a>2.3 RocketMQ架构</h4><p><img src="rocketmq_architecture_1.png" alt="IMAGE"></p>
+<p> <strong>Producer</strong> </p>
+<p> 消息发布的角色，发送模式支持同步发送与异步发送。支持分布式集群部署。</p>
+<p> <strong>Consumer</strong></p>
+<p> 消息消费的角色，支持push 以及 pull 模式。支持分布式集群部署。</p>
+<p> <strong>NameServer</strong></p>
+<p>NameServer 的角色有点类似Kafka 的zookeeper。</p>
+<p>NameServer 主要提供两个功能:</p>
+<ol>
+<li>Broker 管理: NameServer接受Broker集群的注册信息并且保存下来作为路由信息。然后提供心跳检测机制，检查Broker是否还存活。</li>
+<li>Topic 路由信息管理: 每个NameServer将保存关于Broker集群的整个路由信息和用于客户端查询的队列信息。然后Producer和Conumser通过NameServer就可以知道整个Broker集群的路由信息，从而进行消息的投递和消费</li>
+</ol>
+<p>NameServer 通常也是集群部署，但各个实例之间并不通讯。Broker是向每一台NameServer注册自己的路由信息，所以每一个NameServer实例上面都保存一份完整的路由信息。当某个NameServer因某种原因下线了，Broker仍然可以向其它NameServer同步其路由信息，Producer,Consumer仍然可以动态感知Broker的路由的信息。</p>
+<p><strong>Broker</strong></p>
+<p>主要负责消息的存储、投递和查询以及服务高可用保证。</p>
+<p>有以下模块组成:</p>
+<p><img src="rocketmq_architecture_2.png" alt="IMAGE"></p>
+<ol>
+<li>Remoting Module：整个Broker的实体，负责处理来自clients端的请求。</li>
+<li>Client Manager：负责管理客户端(Producer/Consumer)和维护Consumer的Topic订阅信息</li>
+<li>Store Service：提供方便简单的API接口处理消息存储到物理硬盘和查询功能。</li>
+<li>HA Service：高可用服务，提供Master Broker 和 Slave Broker之间的数据同步功能。</li>
+<li>Index Service：根据特定的Message key对投递到Broker的消息进行索引服务，以提供消息的快速查询。</li>
+</ol>
+<p>   <strong>一个请求的调用链</strong>:</p>
+<p><img src="rocketmq_architecture_3.png" alt="IMAGE"></p>
+<ul>
+<li>启动NameServer，NameServer起来后监听端口，等待Broker、Producer、Consumer连上来，相当于一个路由控制中心。</li>
+<li>Broker启动，跟所有的NameServer保持长连接，定时发送心跳包。心跳包中包含当前Broker信息(IP+端口等)以及存储所有Topic信息。注册成功后，NameServer集群中就有Topic跟Broker的映射关系。</li>
+<li>收发消息前，先创建Topic，创建Topic时需要指定该Topic要存储在哪些Broker上，也可以在发送消息时自动创建Topic。</li>
+<li>Producer发送消息，启动时先跟NameServer集群中的其中一台建立长连接，并从NameServer中获取当前发送的Topic存在哪些Broker上，轮询从队列列表中选择一个队列，然后与队列所在的Broker建立长连接从而向Broker发消息。</li>
+<li>Consumer跟Producer类似，跟其中一台NameServer建立长连接，获取当前订阅Topic存在哪些Broker上，然后直接跟Broker建立连接通道，开始消费消息。</li>
+</ul>
+<p><strong>关键设计</strong></p>
+<h5 id="2-3-1-消息存储"><a href="#2-3-1-消息存储" class="headerlink" title="2.3.1 消息存储"></a>2.3.1 消息存储</h5><p><img src="rocketmq_design.png" alt="IMAGE"></p>
+<h5 id="2-3-2-消息存储文件"><a href="#2-3-2-消息存储文件" class="headerlink" title="2.3.2 消息存储文件"></a>2.3.2 消息存储文件</h5><p> <strong>commitlog</strong></p>
+<p>​        消息主体以及元数据的存储主体，存储Producer端写入的消息主体内容,消息内容不是定长的。单个文件大小默认1G ，文件名长度为20位，左边补零，剩余为起始偏移量，比如00000000000000000000代表了第一个文件，起始偏移量为0，文件大小为1G=1073741824；当第一个文件写满了，第二个文件为00000000001073741824，起始偏移量为1073741824，以此类推。消息主要是顺序写入日志文件，当文件满了，写入下一个文件。</p>
+<p> <strong>consumeQueue</strong></p>
+<p>消息消费队列，引入的目的主要是提高消息消费的性能，由于RocketMQ是基于主题topic的订阅模式，消息消费是针对主题进行的，如果要遍历commitlog文件中根据topic检索消息是非常低效的。Consumer即可根据ConsumeQueue来查找待消费的消息。其中，ConsumeQueue（逻辑消费队列）作为消费消息的索引，保存了指定Topic下的队列消息在CommitLog中的起始物理偏移量offset，消息大小size和消息Tag的HashCode值。consumequeue文件可以看成是基于topic的commitlog索引文件，故consumequeue文件夹的组织方式如下：topic/queue/file三层组织结构。同样consumequeue文件采取定长设计，每一个条目共20个字节，分别为8字节的commitlog物理偏移量、4字节的消息长度、8字节tag hashcode，单个文件由30W个条目组成，可以像数组一样随机访问每一个条目，每个ConsumeQueue文件大小约5.72M。</p>
+<p> <strong>indexFile</strong></p>
+<p>IndexFile（索引文件）提供了一种可以通过key或时间区间来查询消息的方法。Index文件的存储位置是：\$HOME/store/index${fileName}，文件名fileName是以创建时的时间戳命名的，固定的单个IndexFile文件大小约为400M，一个IndexFile可以保存 2000W个索引，IndexFile的底层存储设计为在文件系统中实现HashMap结构，故rocketmq的索引文件其底层实现为hash索引。</p>
+<h5 id="2-3-3-同步刷盘和异步刷盘"><a href="#2-3-3-同步刷盘和异步刷盘" class="headerlink" title="2.3.3 同步刷盘和异步刷盘"></a>2.3.3 同步刷盘和异步刷盘</h5><p><img src="rocketmq_design_2.png" alt="IMAGE"></p>
+<p>(1) 同步刷盘：如上图所示，只有在消息真正持久化至磁盘后RocketMQ的Broker端才会真正返回给Producer端一个成功的ACK响应。同步刷盘对MQ消息可靠性来说是一种不错的保障，但是性能上会有较大影响，一般适用于金融业务应用该模式较多。</p>
+<p>(2) 异步刷盘：能够充分利用OS的PageCache的优势，只要消息写入PageCache即可将成功的ACK返回给Producer端。消息刷盘采用后台异步线程提交的方式进行，降低了读写延迟，提高了MQ的性能和吞吐量。</p>
+<h5 id="2-3-4-页缓存技术（PageCache）"><a href="#2-3-4-页缓存技术（PageCache）" class="headerlink" title="2.3.4 页缓存技术（PageCache）"></a>2.3.4 页缓存技术（PageCache）</h5><p><strong>页缓存</strong>（PageCache)是OS对文件的缓存，用于加速对文件的读写。一般来说，程序对文件进行顺序读写的速度几乎接近于内存的读写速度，主要原因就是由于OS使用PageCache机制对读写访问操作进行了性能优化，将一部分的内存用作PageCache。对于数据的写入，RocketMQ会先写入至Cache内，随后通过异步的方式由pdflush内核线程将Cache内的数据刷盘至物理磁盘上。对于数据的读取，如果一次读取文件时出现未命中PageCache的情况(<strong>缺页中断</strong>)，RocketMQ会从物理磁盘上访问读取文件的(调用mlock 来禁止使用swap 以及 调用madvise 进行文件预热)，同时会顺序对其他相邻块的数据文件进行<strong>预读</strong>取。</p>
+<p><img src="pagecache.png" alt="IMAGE"></p>
+<p>在RocketMQ中，ConsumeQueue文件存储的数据较少，并且是顺序读取，在page cache机制的预读取作用下，Consume Queue文件的读性能几乎接近读内存，即使在有消息堆积情况下也不会影响性能。而对于CommitLog消息存储的日志数据文件来说，读取消息内容时候会产生较多的随机访问读取，但整体还是有序地读，只要那整块区域还在Page Cache的范围内，还是可以充分利用Page Cache。</p>
+<h5 id="2-3-5-内存映射"><a href="#2-3-5-内存映射" class="headerlink" title="2.3.5 内存映射"></a>2.3.5 内存映射</h5><p>另外，RocketMQ主要通过MappedByteBuffer对文件进行读写操作。其中，利用了NIO中的FileChannel模型将磁盘上的物理文件直接映射到用户态的内存地址中（这种Mmap的方式减少了传统IO将磁盘文件数据在操作系统内核地址空间的缓冲区和用户应用程序地址空间的缓冲区之间来回进行拷贝的性能开销），将对文件的操作转化为直接对内存地址进行操作，从而极大地提高了文件的读写效率（正因为需要使用内存映射机制，故RocketMQ的文件存储都使用定长结构来存储，方便一次将整个文件映射至内存）。</p>
+<ol>
+<li>read + write (一般发送流程)</li>
+</ol>
+<p><img src="usercopy.png" alt="IMAGE"></p>
+<ol start="2">
+<li><p>mmap + write (rocketmq)</p>
+<p><img src="mmapdma.png" alt="IMAGE"></p>
+</li>
+<li><p>sendfile (linux 2.1 )</p>
+<p><img src="sendfile1.png" alt="IMAGE"></p>
+</li>
+<li><p>sendfile(linux 2.4  kafka)</p>
+</li>
+</ol>
+<p><img src="sendfile2.png" alt="IMAGE"></p>
+<h5 id="2-3-6-与kafka-的一些对比"><a href="#2-3-6-与kafka-的一些对比" class="headerlink" title="2.3.6 与kafka 的一些对比"></a>2.3.6 与kafka 的一些对比</h5><ol>
+<li><p>RocketMQ与Kafka 都是顺序写入，RocketMQ 是所有的消息都写入一个文件中(commitlog)，而Kafka 是一个分区(partition)一个文件，这使得Kafka在数据迁移上更加灵活方便，但是如果存在大量的Topic 和 partition 的话，从全局来看顺序读写将会变为随机读写，不能发挥出PageCache 的优势，相反RocketMQ只有一个文件，从全局来看都是顺序读写，不会有此类问题。(附 阿里云中间件团队测试样例 注: <strong>不断增加发送端的压力,直到系统吞吐量不再上升,而响应时间拉长。此时服务端出现性能瓶颈，获取相应的系统最佳吞吐量，整个过程中保证消息没有累积。</strong>)</p>
+<p><img src="RMQVSKAFKA.png" alt="IMAGE"></p>
+</li>
+</ol>
+<ol start="2">
+<li>RocketMQ 采用 mmap + write 方式，并且通过页缓存禁止使用swap 来提高读写效率以及通过预热技术来解决缺页中断而产生的性能问题。而Kafka 使用了sendfile 函数来发送数据，相对于mmap 少了一次缓存拷贝，所以单从写入来讲，Kafka应该较RokectMQ 要快。</li>
+</ol>
+<h3 id="3-Disruptor，一个特殊的MQ"><a href="#3-Disruptor，一个特殊的MQ" class="headerlink" title="3 .Disruptor，一个特殊的MQ"></a>3 .Disruptor，一个特殊的MQ</h3><h4 id="3-1-Disruptor-介绍"><a href="#3-1-Disruptor-介绍" class="headerlink" title="3.1 Disruptor 介绍"></a>3.1 Disruptor 介绍</h4><p><strong>disruptor</strong>是英国外汇交易公司LMAX开发的一个高性能队列, 研发的初衷是<strong>解决内存队列的延迟问题</strong>（在性能测试中发现竟然与I/O操作处于同样的数量级）. 基于Disruptor开发的系统单线程能支撑<strong>每秒600万订单</strong>, 2010年在QCon演讲后, 获得了业界关注. 2011年, 企业应用软件专家Martin Fowler专门撰写长文介绍. 同年 它还获得了Oracle官方的Duke大奖。</p>
+<h5 id="3-1-1-简单使用"><a href="#3-1-1-简单使用" class="headerlink" title="3.1.1 简单使用"></a>3.1.1 简单使用</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.otsdata.mq.disruptor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.lmax.disruptor.RingBuffer;</span><br><span class="line"><span class="keyword">import</span> com.lmax.disruptor.dsl.Disruptor;</span><br><span class="line"><span class="keyword">import</span> com.lmax.disruptor.util.DaemonThreadFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.nio.ByteBuffer;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DisruptorSimpleExample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		<span class="comment">// RingBuffer大小，必须是2的N次方</span></span><br><span class="line">		<span class="keyword">int</span> bufferSize = <span class="number">1024</span>;</span><br><span class="line">		<span class="comment">// 构建Disruptor</span></span><br><span class="line">		Disruptor&lt;LongEvent&gt; disruptor = <span class="keyword">new</span> Disruptor&lt;&gt;(LongEvent::<span class="keyword">new</span>, bufferSize, DaemonThreadFactory.INSTANCE);</span><br><span class="line">		<span class="comment">// 注册事件处理器</span></span><br><span class="line">		disruptor.handleEventsWith((event, sequence, endOfBatch) -&gt; System.out.println(<span class="string">"receive: "</span> + event.getValue()));</span><br><span class="line">		<span class="comment">// 启动Disruptor</span></span><br><span class="line">		disruptor.start();</span><br><span class="line"></span><br><span class="line">		RingBuffer&lt;LongEvent&gt; ringBuffer = disruptor.getRingBuffer();</span><br><span class="line">		<span class="comment">// 生产Event</span></span><br><span class="line">		ByteBuffer bb = ByteBuffer.allocate(<span class="number">8</span>);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">long</span> l = <span class="number">0</span>; <span class="keyword">true</span>; l++) &#123;</span><br><span class="line">			bb.putLong(<span class="number">0</span>, l);</span><br><span class="line">			<span class="comment">// 生产者生产消息</span></span><br><span class="line">			ringBuffer.publishEvent((event, sequence, buffer) -&gt; event.setValue(buffer.getLong(<span class="number">0</span>)), bb);</span><br><span class="line">			<span class="comment">//TimeUnit.SECONDS.sleep(1);</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LongEvent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">long</span> orderId;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> orderId;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(<span class="keyword">long</span> orderId)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.orderId = orderId;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-1-2-关键概念"><a href="#3-1-2-关键概念" class="headerlink" title="3.1.2 关键概念"></a>3.1.2 关键概念</h5><ul>
+<li><strong>Produce</strong> : 调用Disruptor发送事件的应用程序，在Disruptor框架中并没有对应的实体类</li>
+<li><strong>Ring Buffer</strong> : Disruptor框架的核心，事件存储的数据结构（其实底层就是个数组，下面会介绍），在框架中对应的实体类就是<code>RingBuffer</code></li>
+<li><strong>EventProcessor</strong> : 事件处理器，即消费者。在框架中是一个接口，其实现类<code>BatchEventProcessor</code>支持批量消费。</li>
+<li><strong>EventHandler</strong> : 在框架中是一个接口，应用程序实现这个接口，完成事件的处理逻辑。所以<code>EventHandler</code>是真正的事件处理实现，而上面的<code>EventProcessor</code>其实是封装了事件的获取、调度执行和异常处理等。</li>
+<li><strong>Event</strong> : 事件，生产者和消费者直接传递的数据，在Disruptor框架中没有对应的实体类，由应用程序自己定义</li>
+<li><strong>Sequence</strong> : 上面提到的序列（对于生产者来说，序列的名称为cursor）。<code>Sequence</code>这个类的功能特性和<code>AtomicLong</code>类似。其最大不同是<code>Sequence</code>通过填充缓存行来优化伪共享问题</li>
+<li><strong>Sequencer</strong> : 生产者通过<code>Sequencer</code>来与<code>RingBuffer</code>交互，这个交互指控制生产者的序列<code>cursor</code>。其两个实现类<code>SingleProducerSequencer</code>和<code>MultiProducerSequencer</code>分别支持Disruptor框架的单生产者和多生产者模型</li>
+<li><strong>Sequence Barrier:</strong> 消费者<code>EventProcessor</code>通过<code>SequenceBarrier</code>与<code>RingBuffer</code>交互，同理，这个交互指控制消费者的序列</li>
+<li><strong>Wait Strategy</strong> : 等待策略，指定消费者在无事件可消费的情况下的等待策略，有关的WaitStrategy说明如下:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">名称</th>
+<th style="text-align:left">措施</th>
+<th style="text-align:left">适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">BlockingWaitStrategy</td>
+<td style="text-align:left">加锁</td>
+<td style="text-align:left">CPU资源紧缺，吞吐量和延迟并不重要的场景</td>
+</tr>
+<tr>
+<td style="text-align:left">BusySpinWaitStrategy</td>
+<td style="text-align:left">自旋</td>
+<td style="text-align:left">通过不断重试，减少切换线程导致的系统调用，而降低延迟。推荐在线程绑定到固定的CPU的场景下使用</td>
+</tr>
+<tr>
+<td style="text-align:left">PhasedBackoffWaitStrategy</td>
+<td style="text-align:left">自旋 + yield + 自定义策略</td>
+<td style="text-align:left">CPU资源紧缺，吞吐量和延迟并不重要的场景</td>
+</tr>
+<tr>
+<td style="text-align:left">SleepingWaitStrategy</td>
+<td style="text-align:left">自旋 + yield + sleep</td>
+<td style="text-align:left">性能和CPU资源之间有很好的折中。延迟不均匀</td>
+</tr>
+<tr>
+<td style="text-align:left">TimeoutBlockingWaitStrategy</td>
+<td style="text-align:left">加锁，有超时限制</td>
+<td style="text-align:left">CPU资源紧缺，吞吐量和延迟并不重要的场景</td>
+</tr>
+<tr>
+<td style="text-align:left">YieldingWaitStrategy</td>
+<td style="text-align:left">自旋 + yield + 自旋</td>
+<td style="text-align:left">性能和CPU资源之间有很好的折中。延迟比较均匀</td>
+</tr>
+</tbody>
+</table>
+<h5 id="3-1-3-生产消费流程图"><a href="#3-1-3-生产消费流程图" class="headerlink" title="3.1.3  生产消费流程图"></a>3.1.3  生产消费流程图</h5><p><img src="up-65316e806f87096147bf613ba0990679149.png" alt="IMAGE"></p>
+<h4 id="3-2-高性能队列"><a href="#3-2-高性能队列" class="headerlink" title="3.2 高性能队列"></a>3.2 高性能队列</h4><p>Disruptor 具有<strong>高吞吐，低时延</strong>的特性。目前，包括Apache Storm、Camel、Log4j 2在内的很多知名项目都应用了Disruptor以获取高性能。有的项目架构借鉴了它的设计机制。</p>
+<h5 id="3-2-1-Java常用内置队列特点"><a href="#3-2-1-Java常用内置队列特点" class="headerlink" title="3.2.1 Java常用内置队列特点"></a>3.2.1 Java常用内置队列特点</h5><table>
+<thead>
+<tr>
+<th>队列</th>
+<th>有界性</th>
+<th>锁</th>
+<th>数据结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ArrayBlockingQueue</td>
+<td>bounded</td>
+<td>加锁</td>
+<td>arraylist</td>
+</tr>
+<tr>
+<td>LinkedBlockingQueue</td>
+<td>optionally-bounded(最大Integer.MAX_VALUE)</td>
+<td>加锁</td>
+<td>linkedlist</td>
+</tr>
+<tr>
+<td>ConcurrentLinkedQueue</td>
+<td>unbounded</td>
+<td>无锁</td>
+<td>linkedlist</td>
+</tr>
+<tr>
+<td>LinkedTransferQueue</td>
+<td>unbounded</td>
+<td>无锁</td>
+<td>linkedlist</td>
+</tr>
+<tr>
+<td>PriorityBlockingQueue</td>
+<td>unbounded</td>
+<td>加锁</td>
+<td>heap</td>
+</tr>
+<tr>
+<td>DelayQueue</td>
+<td>unbounded</td>
+<td>加锁</td>
+<td>heap</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>队列的底层存储结构一般分为三种: 数组，链表，堆。</p>
+</li>
+<li><p>堆结构一般涉及到排序用于优先级队列。</p>
+</li>
+<li><p>上述队列只有<strong>ConcurrentLinkedQueue</strong>以及<strong>LinkedTransferQueue</strong> 是无锁的，他们的线程安全都是通过原子变量compare and swap（以下简称“CAS”）这种不加锁的方式来实现的。</p>
+</li>
+<li><p>在稳定性要求特别高的系统中，为了防止生产者速度过快，导致内存溢出，只能选择有界队列。</p>
+</li>
+<li><p><strong>LinkedBlockingQueue</strong>用于存储队列元素的存储空间是在其使用过程中动态分配的，因此它可能会增加JVM垃圾回收的负担，一般情况下，为了减少Java的垃圾回收对系统性能的影响，会尽量选择数组或堆的数据结构。</p>
+<p> <strong>ArrayBlocking的一些问题</strong></p>
+<ol>
+<li><p>加锁。</p>
+<p>现实编程过程中，加锁通常会严重地影响性能。线程会因为竞争不到锁而被挂起，等锁被释放的时候，线程又会被恢复，这个过程中存在着很大的开销，并且通常会有较长时间的中断，因为当一个线程正在等待锁时，它不能做任何其他事情。</p>
+<p>在多线程情况下，为了保证线程安全，必须使用CAS或锁。而在一般情况下，CAS的性能超过锁的性能，单线程情况下，不加锁的性能 &gt; CAS操作的性能 &gt; 加锁的性能。前者大约是后者的8倍（数据来自于Disruptor 官方实验）。</p>
+<p><strong>加锁 VS CAS</strong></p>
+</li>
+</ol>
+</li>
+</ul>
+<pre><code>&lt;img src=&quot;锁.png&quot; alt=&quot;锁&quot; style=&quot;zoom: 30%;&quot; /&gt;&lt;img src=&quot;原子性.png&quot; alt=&quot;原子性&quot; style=&quot;zoom: 30%;&quot; /&gt;
+</code></pre><ol start="2">
+<li><p>伪共享。</p>
+<p><img src="69ce8ffbe7a4ebee01c377dac174842d433755.png" alt="69ce8ffbe7a4ebee01c377dac174842d433755" style="zoom: 50%;"></p>
+<p>上图是CPU的基本结构，L1、L2、L3分别表示一级缓存、二级缓存、三级缓存，越靠近CPU的缓存，速度越快，容量也越小。所以L1缓存很小但很快，并且紧靠着在使用它的CPU内核；L2大一些，也慢一些，并且仍然只能被一个单独的CPU核使用；L3更大、更慢，并且被单个插槽上的所有CPU核共享；最后是主存，由全部插槽上的所有CPU核共享。当CPU执行运算的时候, 它先去L1查找所需的数据、再去L2、然后是L3, 如果最后这些缓存中都没有, 所需的数据就要去主内存拿. 走得越远, 运算耗费的时间就越长. 所以如果你在做一些很频繁的事, 你要尽量确保数据在L1缓存中。另外, 线程之间共享一份数据的时候, 如果修改了数据, 需要一个线程把数据写回主存, 而另一个线程访问主存中相应的数据。（MESI： 缓存一致性原理）</p>
+<p>| 从CPU到                                  | 大约需要的CPU周期 | 大约需要的时间 |<br>| :————————————— | :—————- | :————- |<br>| 主存                                     |                   | 约60-80ns      |<br>| QPI 总线传输(between sockets, not drawn) |                   | 约20ns         |<br>| L3 cache                                 | 约40-45 cycles    | 约15ns         |<br>| L2 cache                                 | 约10 cycles       | 约3ns          |<br>| L1 cache                                 | 约3-4 cycles      | 约1ns          |<br>| 寄存器                                   | 1 cycle           |                |</p>
+<p>缓存行:</p>
+<p>Cache是由很多个cache line组成的. 每个cache line通常是64字节, 并且它有效地引用主内存中的一块地址. 一个Java的long类型变量是8字节, 因此在    一个缓存行中可以存8个long类型的变量。<br>CPU每次从主存中拉取数据时, 会把相邻的数据也存入同一个CacheLine。<br>在访问一个long数组的时候, 如果数组中的一个值被加载到缓存中, 它会自动加载另外7个. 因此你能非常快的遍历这个数组. 事实上, 你可以非常快速的遍历在连续内存块中分配的任意数据结构。</p>
+<p>缓存行的作用:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacheLineEffect</span> </span>&#123;</span><br><span class="line">   	<span class="comment">//考虑一般缓存行大小是64字节，一个 long 类型占8字节</span></span><br><span class="line">   	<span class="keyword">static</span>  <span class="keyword">long</span>[][] arr;</span><br><span class="line">   </span><br><span class="line">   	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">   		<span class="comment">//声明数组</span></span><br><span class="line">   		arr = <span class="keyword">new</span> <span class="keyword">long</span>[<span class="number">1024</span> * <span class="number">1024</span>][];</span><br><span class="line">   		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1024</span> * <span class="number">1024</span>; i++) &#123;</span><br><span class="line">   			arr[i] = <span class="keyword">new</span> <span class="keyword">long</span>[<span class="number">8</span>];</span><br><span class="line">   			<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">8</span>; j++) &#123;</span><br><span class="line">   				arr[i][j] = <span class="number">0L</span>;</span><br><span class="line">   			&#125;</span><br><span class="line">   		&#125;</span><br><span class="line">           </span><br><span class="line">   		<span class="comment">//1 二位数组，一行一行读取</span></span><br><span class="line">   		<span class="keyword">long</span> sum = <span class="number">0L</span>;</span><br><span class="line">   		<span class="keyword">long</span> marked = System.currentTimeMillis();</span><br><span class="line">   		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1024</span> * <span class="number">1024</span>; i+=<span class="number">1</span>) &#123;</span><br><span class="line">   			<span class="keyword">for</span>(<span class="keyword">int</span> j =<span class="number">0</span>; j&lt; <span class="number">8</span>;j++)&#123;</span><br><span class="line">   				sum = arr[i][j];</span><br><span class="line">   			&#125;</span><br><span class="line">   		&#125;</span><br><span class="line">   		System.out.println(<span class="string">"Loop times:"</span> + (System.currentTimeMillis() - marked) + <span class="string">"ms"</span>);</span><br><span class="line">   </span><br><span class="line">   		<span class="comment">//2 二位数组，一列一列读取</span></span><br><span class="line">   		marked = System.currentTimeMillis();</span><br><span class="line">   		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">8</span>; i+=<span class="number">1</span>) &#123;</span><br><span class="line">   			<span class="keyword">for</span>(<span class="keyword">int</span> j =<span class="number">0</span>; j&lt; <span class="number">1024</span> * <span class="number">1024</span>;j++)&#123;</span><br><span class="line">   				sum = arr[j][i];</span><br><span class="line">   			&#125;</span><br><span class="line">   		&#125;</span><br><span class="line">   		System.out.println(<span class="string">"Loop times:"</span> + (System.currentTimeMillis() - marked) + <span class="string">"ms"</span>);</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ArrayBlockingQueue问题所在:</p>
+<p>ArrayBlockingQueue有三个成员变量： - <strong>takeIndex：需要被取走的元素下标 - putIndex：可被元素插入的位置的下标 - count：队列中元素的数量</strong></p>
+<p>这三个变量很容易放到一个缓存行中，但是之间修改没有太多的关联。所以每次修改，都会使之前缓存的数据失效，从而不能完全达到共享的效果。</p>
+<p><img src="192e9b87b7a5b68cac352fdeb81dc93b161543.png" alt="IMAGE"></p>
+</li>
+</ol>
+<p>​            这就是<strong>缓存伪共享</strong>问题，两个毫无关联的线程执行，一个线程却因为另一个线程的操作，导致缓存失效。这两个线程其实就是对同一缓存行产生了竞争，降低了并发性。</p>
+<h5 id="3-2-2-Disruptor-的高性能秘诀"><a href="#3-2-2-Disruptor-的高性能秘诀" class="headerlink" title="3.2.2 Disruptor 的高性能秘诀"></a>3.2.2 Disruptor 的高性能秘诀</h5><ul>
+<li><p>RingBuffer（消息存储）。</p>
+<p><img src="java-concurrent-disruptor-ring-buffer.png" alt="IMAGE"></p>
+<p>RringBuffer 是通过数组实现的，它使用了快速取模算法（按位与）来实现逻辑环状结构。这个数组是一次性创建，且数组申请到的内存大概率是连续的，这就对CPU缓存非常友好 – 也就是说，在硬件机制方面，数组中的元素会被CPU预加载，CPU也就不需要每次去主存加载元素，直接在CPU Cache 就完成了对数据的读取。另外在Disruptor中，生产者线程通过publishEvent发布Event时，并不是创建一个新的Event而是通过event.setValue来修改Event，即<strong>循环利用</strong>RingBuffer中的Event，避免出现频繁创建和销毁Event 而产生的GC问题。</p>
+</li>
+<li><p>避免伪共享</p>
+<p>Disruptor 为了解决伪共享问题，使用的方法是<strong>缓存行填充</strong>。这是一种以空间换时间的策略，主要思想就是通过往对象中填充无意义的变量，来保证整个对象<strong>独占缓存行</strong>。</p>
+<p>举个例子，以 Disruptor 中的 Sequence 为例，在 volatile long value 的前后各放置了 7 个 long 型变量，确保 value 独占一个缓存行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sequence</span> <span class="keyword">extends</span> <span class="title">RhsPadding</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> VALUE_OFFSET;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        VALUE_OFFSET = UNSAFE.objectFieldOffset(Value.class.getDeclaredField(<span class="string">"value"</span>));</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RhsPadding</span> <span class="keyword">extends</span> <span class="title">Value</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">long</span> p9, p10, p11, p12, p13, p14, p15;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Value</span> <span class="keyword">extends</span> <span class="title">LhsPadding</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">volatile</span> <span class="keyword">long</span> value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LhsPadding</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">long</span> p1, p2, p3, p4, p5, p6, p7;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如下图所示，一个小格为8个字节，一个CacheLine包含8个小格(64字节)，其中 V 就是 Value 类的 value，P 为 value 前后填充的无意义 long 型变量，U 为其它无关的变量。不论什么情况下，都能保证 V 不和其他无关的变量处于同一缓存行中，这样 V 就不会被其他无关的变量U所影响。</p>
+</li>
+</ul>
+<p><img src="20200315233704730.jpg" alt="IMAGE"></p>
+<p>​    来看一看真正共享的魔法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacheFalseSharing</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> ITERATIONS = <span class="number">500L</span> * <span class="number">1000L</span> * <span class="number">100L</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> arrayIndex = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Value[] valueArray = <span class="keyword">new</span> Value[<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CacheFalseSharing</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> arrayIndex)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.arrayIndex = arrayIndex;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">			<span class="comment">//System.gc();</span></span><br><span class="line">			<span class="keyword">final</span> <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">			testSharing(i);</span><br><span class="line">			System.out.println(<span class="string">"Thread num "</span>+i+<span class="string">" duration = "</span> + (System.currentTimeMillis() - start));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testSharing</span><span class="params">(<span class="keyword">int</span> NUM_THREADS)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		Thread[] threads = <span class="keyword">new</span> Thread[NUM_THREADS];</span><br><span class="line">		<span class="comment">//初始化值</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; valueArray.length; i++) &#123;</span><br><span class="line">			valueArray[i] = <span class="keyword">new</span> Value();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//初始化线程</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threads.length; i++) &#123;</span><br><span class="line">			threads[i] = <span class="keyword">new</span> Thread(<span class="keyword">new</span> CacheFalseSharing(i));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 线程开始执行</span></span><br><span class="line">		<span class="keyword">for</span> (Thread t : threads) &#123;</span><br><span class="line">			t.start();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 等待线程执行完</span></span><br><span class="line">		<span class="keyword">for</span> (Thread t : threads) &#123;</span><br><span class="line">			t.join();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">long</span> i = ITERATIONS + <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">while</span> (<span class="number">0</span> != --i) &#123;</span><br><span class="line">			valueArray[arrayIndex].value = <span class="number">0L</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Value</span> </span>&#123;</span><br><span class="line">		<span class="comment">//protected long p1, p2, p3, p4, p5, p6, p7;</span></span><br><span class="line">		<span class="keyword">protected</span> <span class="keyword">volatile</span> <span class="keyword">long</span> value = <span class="number">0L</span>;</span><br><span class="line">		<span class="comment">//protected long p9, p10, p11, p12, p13, p14, p15;</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 JDK 1.8 中，提供了<a href="mailto:**@sun.misc.Contended" target="_blank" rel="noopener">**@sun.misc.Contended</a><strong>注解，使用该注解就可以让变量独占缓存行，不再需要手动填充了。 注意，JVM 需要添加参数 </strong>-XX:-RestrictContended**才能开启此功能。</p>
+<ul>
+<li>CAS</li>
+</ul>
+<p>Disruptor 采用 <strong>CAS</strong> 的方式来解决多线程生产与消费消息。多线程的情况下，生产者主要考虑<strong>如何避免多个生产者重复写同一个元素以及如何避免写未消费的元素位置</strong>，消费者主要主要考虑<strong>如何避免读未生产完成的元素</strong></p>
+<p>如<strong>com.lmax.disruptor.MultiProducerSequencer#next(int)</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span></span><br><span class="line">&#123;</span><br><span class="line">    current = cursor.get();                                                         <span class="comment">//生产者当前位置</span></span><br><span class="line">    next = current + n;                                                             <span class="comment">//插入n个新数据后的位置</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">long</span> wrapPoint = next - bufferSize;                                             <span class="comment">//新位置减去ringbuffer长度</span></span><br><span class="line">    <span class="keyword">long</span> cachedGatingSequence = gatingSequenceCache.get();                          <span class="comment">//消费者位置</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (wrapPoint &gt; cachedGatingSequence || cachedGatingSequence &gt; current)         <span class="comment">//wrapPoint &gt;       cachedGatingSequence表示生产者超																					 																							过了消费者一圈</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">long</span> gatingSequence = Util.getMinimumSequence(gatingSequences, current);    <span class="comment">//获取最新的消费者位置</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (wrapPoint &gt; gatingSequence)                                             <span class="comment">//如果还是超过一圈则等待并重试</span></span><br><span class="line">        &#123;</span><br><span class="line">            LockSupport.parkNanos(<span class="number">1</span>); <span class="comment">// TODO, should we spin based on the wait strategy? //没位置可写暂停当前线程1微秒</span></span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        gatingSequenceCache.set(gatingSequence);                                   <span class="comment">//更新缓存的消费者位置</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cursor.compareAndSet(current, next))                                  <span class="comment">//更新生产者位置</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">while</span> (<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<p>如<strong>com.lmax.disruptor.WorkProcessor#run()</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="keyword">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//省略注解</span></span><br><span class="line">        <span class="keyword">if</span> (processedSequence)</span><br><span class="line">        &#123;</span><br><span class="line">            processedSequence = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">do</span></span><br><span class="line">            &#123;</span><br><span class="line">                nextSequence = workSequence.get() + <span class="number">1L</span>;                            <span class="comment">//从workSequence的下一个位置</span></span><br><span class="line">                sequence.set(nextSequence - <span class="number">1L</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (!workSequence.compareAndSet(nextSequence - <span class="number">1L</span>, nextSequence));  <span class="comment">//竞争这个位置</span></span><br><span class="line">        &#125;</span><br><span class="line">                                                                           </span><br><span class="line">        <span class="keyword">if</span> (cachedAvailableSequence &gt;= nextSequence)                               <span class="comment">//如果这个位置小于缓存的依赖的位置</span></span><br><span class="line">        &#123;</span><br><span class="line">            event = ringBuffer.get(nextSequence);                                  <span class="comment">//获取这个位置的数据并消费</span></span><br><span class="line">            workHandler.onEvent(event);</span><br><span class="line">            processedSequence = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            cachedAvailableSequence = sequenceBarrier.waitFor(nextSequence);      <span class="comment">//等待并获取最大可消费位置</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>如果看的爽，不如请我吃根辣条？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/weixin.jpg" alt="Kam 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/24/Dockerfile-自动构建你的Docker镜像/" rel="next" title="Dockerfile 自动构建你的Docker镜像">
+                <i class="fa fa-chevron-left"></i> Dockerfile 自动构建你的Docker镜像
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Kam</p>
+              <p class="site-description motion-element" itemprop="description">闻道无先后，术业有专攻。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MQ的基础使用与原理"><span class="nav-number">1.</span> <span class="nav-text">MQ的基础使用与原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-MQ-的基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">1. MQ 的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-MQ-的应用场景"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 MQ 的应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-一般MQ的基本角色"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 一般MQ的基本角色</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-队列的分类"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 队列的分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-消费模式"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 消费模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-消息队列对比"><span class="nav-number">1.2.</span> <span class="nav-text">2. 消息队列对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-各类MQ对比"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 各类MQ对比</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-RabbitMQ架构"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 RabbitMQ架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-RocketMQ架构"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 RocketMQ架构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-1-消息存储"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">2.3.1 消息存储</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-2-消息存储文件"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">2.3.2 消息存储文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-3-同步刷盘和异步刷盘"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">2.3.3 同步刷盘和异步刷盘</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-4-页缓存技术（PageCache）"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">2.3.4 页缓存技术（PageCache）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-5-内存映射"><span class="nav-number">1.2.3.5.</span> <span class="nav-text">2.3.5 内存映射</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-6-与kafka-的一些对比"><span class="nav-number">1.2.3.6.</span> <span class="nav-text">2.3.6 与kafka 的一些对比</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Disruptor，一个特殊的MQ"><span class="nav-number">1.3.</span> <span class="nav-text">3 .Disruptor，一个特殊的MQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-Disruptor-介绍"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 Disruptor 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-1-简单使用"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">3.1.1 简单使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-2-关键概念"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">3.1.2 关键概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-3-生产消费流程图"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">3.1.3  生产消费流程图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-高性能队列"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 高性能队列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-1-Java常用内置队列特点"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">3.2.1 Java常用内置队列特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-2-Disruptor-的高性能秘诀"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">3.2.2 Disruptor 的高性能秘诀</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kam</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
